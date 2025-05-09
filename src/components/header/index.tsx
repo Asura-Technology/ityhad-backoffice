@@ -2,7 +2,7 @@
 
 import { ColorModeContext } from "@contexts/color-mode";
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useLogout } from "@refinedev/core";
 import {
   Avatar,
   Layout as AntdLayout,
@@ -10,8 +10,12 @@ import {
   Switch,
   theme,
   Typography,
+  Dropdown,
+  Menu,
 } from "antd";
+import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
+import { useRouter } from "next/navigation";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -28,6 +32,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { token } = useToken();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+  const { mutate: logout } = useLogout();
+  const router = useRouter();
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -44,6 +50,21 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     headerStyles.zIndex = 1;
   }
 
+  const menuItems = [
+    {
+      key: "profile",
+      icon: <UserOutlined />,
+      label: "Mon profil",
+      onClick: () => router.push("/settings"),
+    },
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Déconnexion",
+      onClick: () => logout(),
+    },
+  ];
+
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
@@ -56,7 +77,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
         {(user?.name || user?.avatar) && (
           <Space style={{ marginLeft: "8px" }} size="middle">
             {user?.name && <Text strong>{user.name}</Text>}
-            {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+            <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>
+              <Avatar
+                src={user?.avatar}
+                alt={user?.name}
+                style={{ cursor: "pointer" }}
+              />
+            </Dropdown>
           </Space>
         )}
       </Space>

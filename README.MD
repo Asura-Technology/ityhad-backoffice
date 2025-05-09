@@ -15,6 +15,18 @@ A React Framework for building internal tools, admin panels, dashboards & B2B ap
 
 Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
 
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+# Hasura Configuration
+NEXT_PUBLIC_HASURA_API_URL=your_hasura_api_url
+NEXT_PUBLIC_HASURA_ADMIN_SECRET=your_hasura_admin_secret
+```
+
+For production deployment, make sure to set these environment variables in your hosting platform.
+
 ## Available Scripts
 
 ### Running the development server.
@@ -33,6 +45,21 @@ Refine's hooks and components simplifies the development process and eliminates 
 
 ```bash
     npm run start
+```
+
+## Docker Deployment
+
+To build and run the Docker container:
+
+```bash
+# Build the image
+docker build \
+  --build-arg NEXT_PUBLIC_HASURA_API_URL=your_hasura_api_url \
+  --build-arg NEXT_PUBLIC_HASURA_ADMIN_SECRET=your_hasura_admin_secret \
+  -t ityhad-app .
+
+# Run the container
+docker run -p 3000:3000 ityhad-app
 ```
 
 ## Learn More
