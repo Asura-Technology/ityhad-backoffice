@@ -9,14 +9,13 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
-import { Space, Table, Input } from "antd";
+import { Space, Table, Tag, Input } from "antd";
 import React, { useState } from "react";
 import { TESTIMONIES_QUERY } from "@queries/testimonies";
 
 export default function TestimonyList() {
   const [search, setSearch] = useState("");
   const { tableProps, setFilters } = useTable({
-    resource: "testimony",
     syncWithLocation: true,
     meta: {
       fields: TESTIMONIES_QUERY,
@@ -88,7 +87,6 @@ export default function TestimonyList() {
 
   return (
     <List
-      resource="testimony"
       headerButtons={[
         <Input.Search
           key="search"
