@@ -3,7 +3,7 @@ import { Layout } from "@components/layout";
 import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
 import { redirect } from "next/navigation";
 
-export default async function DashboardLayout({
+export default async function TestimoniesLayout({
   children,
 }: React.PropsWithChildren) {
   const data = await getData();

@@ -7,8 +7,14 @@ import { SettingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
+interface User {
+  name?: string;
+  email?: string;
+  // add other fields if needed
+}
+
 export default function SettingsPage() {
-  const { data: user } = useGetIdentity();
+  const { data: user } = useGetIdentity<User>();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: any) => {
@@ -31,7 +37,7 @@ export default function SettingsPage() {
       >
         <Title level={4}>Mes informations</Title>
         <p>
-          <b>Nom:</b> {user?.name || "-"}
+          <b>Nom Complet:</b> {user?.name || "-"}
         </p>
         <p>
           <b>Email:</b> {user?.email || "-"}

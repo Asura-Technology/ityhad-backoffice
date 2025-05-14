@@ -23,6 +23,7 @@ import {
 import { useTable } from "@refinedev/antd";
 import { useList } from "@refinedev/core";
 import { REPORTS_QUERY } from "@queries/reports";
+import { DateField } from "@refinedev/antd";
 
 const { RangePicker } = DatePicker;
 
@@ -53,19 +54,19 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      title: "Total des rapports",
+      title: "Total des signalements",
       value: totalReports,
       icon: <FileTextOutlined />,
       color: "#ff4d4f",
     },
     {
-      title: "Rapports non traités",
+      title: "Signalements non traités",
       value: unprocessedReports,
       icon: <FileTextOutlined />,
       color: "#ff4d4f",
     },
     {
-      title: "Rapports traités",
+      title: "Signalements traités",
       value: processedReports,
       icon: <FileTextOutlined />,
       color: "#52c41a",
@@ -129,6 +130,9 @@ export default function DashboardPage() {
       title: "Last Updated",
       dataIndex: ["report_statuses", 0, "date"],
       key: "last_updated",
+      render: (value: string) => (
+        <DateField value={value} format="DD/MM/YYYY HH:mm" locales="fr-FR" />
+      ),
     },
   ];
 
@@ -167,7 +171,7 @@ export default function DashboardPage() {
       </Row>
 
       {/* Table */}
-      <Card title="Rapports récents">
+      <Card title="Signalements récents">
         <Table {...tableProps} columns={columns} rowKey="id" />
       </Card>
     </div>

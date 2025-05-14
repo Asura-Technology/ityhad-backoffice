@@ -1,26 +1,13 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";
-import { Refine, GitHubBanner } from "@refinedev/core";
-import { DevtoolsProvider } from "@providers/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import { ThemedTitleV2, useNotificationProvider } from "@refinedev/antd";
-import routerProvider from "@refinedev/nextjs-router";
-import {
-  FileTextOutlined,
-  UserOutlined,
-  TeamOutlined,
-  BankOutlined,
-  DashboardOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-
-import { dataProvider } from "@providers/data-provider";
+import { GitHubBanner } from "@refinedev/core";
+import { RefineKbarProvider } from "@refinedev/kbar";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@refinedev/antd/dist/reset.css";
-import { AppIcon } from "@components/app-icon";
 import { ColorModeContextProvider } from "@contexts/color-mode";
-import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
+import { RefineWrapper } from "@components/refine-wrapper";
+import { QueryProvider } from "@providers/query-provider";
 
 export const metadata: Metadata = {
   title: "iThad",
@@ -44,95 +31,15 @@ export default function RootLayout({
       <body>
         <Suspense>
           {/* <GitHubBanner /> */}
-          <RefineKbarProvider>
-            <AntdRegistry>
-              <ColorModeContextProvider defaultMode={defaultMode}>
-                <DevtoolsProvider>
-                  <Refine
-                    routerProvider={routerProvider}
-                    dataProvider={dataProvider}
-                    notificationProvider={useNotificationProvider}
-                    authProvider={authProviderClient}
-                    resources={[
-                      {
-                        name: "dashboard",
-                        list: "/dashboard",
-                        meta: {
-                          label: "Tableau de bord",
-                          icon: <DashboardOutlined />,
-                        },
-                      },
-                      {
-                        name: "report",
-                        list: "/reports",
-                        create: "/reports/create",
-                        edit: "/reports/edit/:id",
-                        show: "/reports/show/:id",
-                        meta: {
-                          canDelete: true,
-                          icon: <FileTextOutlined />,
-                          label: "Rapports",
-                        },
-                      },
-                      {
-                        name: "student",
-                        list: "/students",
-                        create: "/students/create",
-                        edit: "/students/edit/:id",
-                        show: "/students/show/:id",
-                        meta: {
-                          canDelete: true,
-                          icon: <TeamOutlined />,
-                          label: "Utilisateurs / Élèves",
-                        },
-                      },
-                      {
-                        name: "doctor",
-                        list: "/doctors",
-                        create: "/doctors/create",
-                        edit: "/doctors/edit/:id",
-                        show: "/doctors/show/:id",
-                        meta: {
-                          canDelete: true,
-                          icon: <UserOutlined />,
-                          label: "Professionnels Santé",
-                        },
-                      },
-                      {
-                        name: "school",
-                        list: "/schools",
-                        create: "/schools/create",
-                        edit: "/schools/edit/:id",
-                        show: "/schools/show/:id",
-                        meta: {
-                          icon: <BankOutlined />,
-                          label: "Établissements",
-                        },
-                      },
-                      {
-                        name: "settings",
-                        list: "/settings",
-                        meta: {
-                          label: "Paramètres",
-                          icon: <SettingOutlined />,
-                        },
-                      },
-                    ]}
-                    options={{
-                      syncWithLocation: true,
-                      warnWhenUnsavedChanges: true,
-                      useNewQueryKeys: true,
-                      projectId: "GCdYfy-0LPKQV-MiBaXa",
-                      title: { text: "iTyhad", icon: <AppIcon /> },
-                    }}
-                  >
-                    {children}
-                    <RefineKbar />
-                  </Refine>
-                </DevtoolsProvider>
-              </ColorModeContextProvider>
-            </AntdRegistry>
-          </RefineKbarProvider>
+          <QueryProvider>
+            <RefineKbarProvider>
+              <AntdRegistry>
+                <ColorModeContextProvider defaultMode={defaultMode}>
+                  <RefineWrapper>{children}</RefineWrapper>
+                </ColorModeContextProvider>
+              </AntdRegistry>
+            </RefineKbarProvider>
+          </QueryProvider>
         </Suspense>
       </body>
     </html>
