@@ -25,13 +25,7 @@ RUN npm run build
 
 FROM base AS runner
 
-# Build-time arguments
-ARG NEXT_PUBLIC_HASURA_API_URL
-ARG NEXT_PUBLIC_HASURA_ADMIN_SECRET
 
-# Set environment variables
-ENV NEXT_PUBLIC_HASURA_API_URL=$NEXT_PUBLIC_HASURA_API_URL
-ENV NEXT_PUBLIC_HASURA_ADMIN_SECRET=$NEXT_PUBLIC_HASURA_ADMIN_SECRET
 ENV NODE_ENV production
 
 COPY --from=builder /app/refine/public ./public
@@ -48,5 +42,6 @@ EXPOSE 3000
 
 ENV PORT 3000
 
+ENV HOST 0.0.0.0
 
 CMD ["node", "server.js"]
