@@ -19,6 +19,12 @@ COPY --from=deps /app/refine/node_modules ./node_modules
 
 COPY . .
 
+
+
+RUN npm run build
+
+FROM base AS runner
+
 # Build-time arguments
 ARG NEXT_PUBLIC_HASURA_API_URL
 ARG NEXT_PUBLIC_HASURA_ADMIN_SECRET
@@ -26,11 +32,6 @@ ARG NEXT_PUBLIC_HASURA_ADMIN_SECRET
 # Set environment variables
 ENV NEXT_PUBLIC_HASURA_API_URL=$NEXT_PUBLIC_HASURA_API_URL
 ENV NEXT_PUBLIC_HASURA_ADMIN_SECRET=$NEXT_PUBLIC_HASURA_ADMIN_SECRET
-
-RUN npm run build
-
-FROM base AS runner
-
 ENV NODE_ENV production
 
 COPY --from=builder /app/refine/public ./public
