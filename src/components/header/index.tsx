@@ -60,7 +60,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Déconnexion",
+      label: "Logout",
       onClick: () => logout(),
     },
   ];

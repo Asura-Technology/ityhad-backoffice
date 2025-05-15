@@ -1,18 +1,17 @@
 import React from "react";
-import { Layout } from "@components/layout";
+import { ThemedLayoutV2 } from "@refinedev/antd";
+import { Header } from "@components/header";
 import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
 import { redirect } from "next/navigation";
 
-export default async function DashboardLayout({
-  children,
-}: React.PropsWithChildren) {
+export default async function Layout({ children }: React.PropsWithChildren) {
   const data = await getData();
 
   if (!data.authenticated) {
     return redirect(data?.redirectTo || "/login");
   }
 
-  return <Layout>{children}</Layout>;
+  return <ThemedLayoutV2 Header={Header}>{children}</ThemedLayoutV2>;
 }
 
 async function getData() {
