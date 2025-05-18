@@ -186,11 +186,13 @@ export default function DashboardPage() {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      sorter: true,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      sorter: true,
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -198,6 +200,7 @@ export default function DashboardPage() {
       title: "Recommendation",
       dataIndex: "recommendation",
       key: "recommendation",
+      sorter: true,
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -205,6 +208,7 @@ export default function DashboardPage() {
       title: "Dangerous",
       dataIndex: "is_dangerous",
       key: "is_dangerous",
+      sorter: true,
       render: (value: boolean) => (
         <Tag color={value ? "red" : "green"}>{value ? "Yes" : "No"}</Tag>
       ),
@@ -213,6 +217,7 @@ export default function DashboardPage() {
       title: "Private",
       dataIndex: "is_private",
       key: "is_private",
+      sorter: true,
       render: (value: boolean) => (
         <Tag color={value ? "blue" : "default"}>{value ? "Yes" : "No"}</Tag>
       ),
@@ -221,11 +226,13 @@ export default function DashboardPage() {
       title: "Latest Status",
       dataIndex: ["report_statuses", 0, "status", "name"],
       key: "latest_status",
+      sorter: true,
     },
     {
       title: "Last Updated",
       dataIndex: ["report_statuses", 0, "date"],
       key: "last_updated",
+      sorter: true,
       render: (value: string) => (
         <DateField value={value} format="DD/MM/YYYY HH:mm" locales="fr-FR" />
       ),
