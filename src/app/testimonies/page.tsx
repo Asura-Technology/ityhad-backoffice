@@ -4,6 +4,7 @@ import {
   DateField,
   DeleteButton,
   EditButton,
+  FilterDropdown,
   List,
   ShowButton,
   useTable,
@@ -18,7 +19,9 @@ const { RangePicker } = DatePicker;
 
 export default function TestimonyList() {
   const [search, setSearch] = useState("");
-  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -26,11 +29,10 @@ export default function TestimonyList() {
     },
   });
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearch = (value: string, field: string) => {
     const filters: LogicalFilter[] = [
       {
-        field: "description",
+        field,
         operator: "contains",
         value,
       },
@@ -44,7 +46,7 @@ export default function TestimonyList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateRange[1]).endOf('day').toISOString(),
+        value: dayjs(dateRange[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
@@ -59,7 +61,7 @@ export default function TestimonyList() {
         value: search,
       },
     ];
-     if (dateStrings[0] && dateStrings[1]) {
+    if (dateStrings[0] && dateStrings[1]) {
       filters.push({
         field: "created_at",
         operator: "gte",
@@ -68,7 +70,7 @@ export default function TestimonyList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateStrings[1]).endOf('day').toISOString(),
+        value: dayjs(dateStrings[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
@@ -86,6 +88,18 @@ export default function TestimonyList() {
       dataIndex: "description",
       key: "description",
       sorter: true,
+      filterDropdown: (props: any) => (
+        <FilterDropdown {...props}>
+          <Input
+            placeholder="Rechercher Description"
+            allowClear
+            onPressEnter={(e) => {
+              const value = (e.target as HTMLInputElement).value;
+              handleSearch(value, "description");
+            }}
+          />
+        </FilterDropdown>
+      ),
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -94,6 +108,18 @@ export default function TestimonyList() {
       dataIndex: "place",
       key: "place",
       sorter: true,
+      filterDropdown: (props: any) => (
+        <FilterDropdown {...props}>
+          <Input
+            placeholder="Rechercher Lieu"
+            allowClear
+            onPressEnter={(e) => {
+              const value = (e.target as HTMLInputElement).value;
+              handleSearch(value, "place");
+            }}
+          />
+        </FilterDropdown>
+      ),
     },
     {
       title: "Élève",
@@ -130,24 +156,7 @@ export default function TestimonyList() {
   ];
 
   return (
-    <List
-      headerButtons={[
-        <Input.Search
-          key="search"
-          placeholder="Rechercher un témoignage..."
-          allowClear
-          onSearch={handleSearch}
-          style={{ width: 200, marginRight: 8 }}
-        />,
-        <RangePicker
-          key="date-range"
-          onChange={handleDateRangeChange}
-          style={{ marginRight: 8 }}
-          placeholder={['Début', 'Fin']}
-          allowClear
-        />,
-      ]}
-    >
+    <List headerButtons={[]}>
       <Table {...tableProps} columns={columns} rowKey="id" />
     </List>
   );

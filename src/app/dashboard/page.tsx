@@ -31,8 +31,10 @@ const { RangePicker } = DatePicker;
 
 export default function DashboardPage() {
   const [searchText, setSearchText] = React.useState<string>("");
-  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
-  
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
+
   // Table data
   const { tableProps, setFilters } = useTable({
     resource: "report",
@@ -98,7 +100,7 @@ export default function DashboardPage() {
   const handleExport = () => {
     // Get the current filtered data
     const data = tableProps.dataSource || [];
-    
+
     // Define CSV headers
     const headers = [
       "ID",
@@ -107,7 +109,7 @@ export default function DashboardPage() {
       "Dangerous",
       "Private",
       "Latest Status",
-      "Last Updated"
+      "Last Updated",
     ];
 
     // Convert data to CSV rows
@@ -118,14 +120,15 @@ export default function DashboardPage() {
       report.is_dangerous ? "Yes" : "No",
       report.is_private ? "Yes" : "No",
       report.report_statuses?.[0]?.status?.name || "",
-      report.report_statuses?.[0]?.date ? 
-        dayjs(report.report_statuses[0].date).format("DD/MM/YYYY HH:mm") : ""
+      report.report_statuses?.[0]?.date
+        ? dayjs(report.report_statuses[0].date).format("DD/MM/YYYY HH:mm")
+        : "",
     ]);
 
     // Combine headers and rows
     const csvContent = [
       headers.join(","),
-      ...csvRows.map(row => row.map(cell => `"${cell}"`).join(","))
+      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
     ].join("\n");
 
     // Create and trigger download
@@ -133,7 +136,10 @@ export default function DashboardPage() {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `reports_export_${dayjs().format("YYYY-MM-DD_HH-mm")}.csv`);
+    link.setAttribute(
+      "download",
+      `reports_export_${dayjs().format("YYYY-MM-DD_HH-mm")}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -244,22 +250,19 @@ export default function DashboardPage() {
       {/* Filter Bar */}
       <Row gutter={16} style={{ marginBottom: 24 }} align="middle">
         <Col>
-          <RangePicker 
-            onChange={handleDateRangeChange}
-            allowClear
-          />
+          <RangePicker onChange={handleDateRangeChange} allowClear />
         </Col>
         <Col>
-          <Input.Search 
-            placeholder="Recherche..." 
+          <Input.Search
+            placeholder="Recherche..."
             style={{ width: 200 }}
             onSearch={handleSearch}
             allowClear
           />
         </Col>
         <Col>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             onClick={handleExport}
             icon={<FileTextOutlined />}
           >

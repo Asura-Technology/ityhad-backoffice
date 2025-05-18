@@ -4,12 +4,13 @@ import {
   DateField,
   DeleteButton,
   EditButton,
+  FilterDropdown,
   List,
   ShowButton,
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
-import { Space, Table, Tag, Input, DatePicker } from "antd";
+import { Space, Table, Tag, Input, DatePicker, Button } from "antd";
 import React, { useState } from "react";
 import { REPORTS_QUERY } from "@queries/reports";
 import dayjs from "dayjs";
@@ -19,7 +20,9 @@ const { RangePicker } = DatePicker;
 
 export default function ReportList() {
   const [search, setSearch] = useState("");
-  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -27,11 +30,10 @@ export default function ReportList() {
     },
   });
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearch = (value: string, field: string) => {
     const filters: LogicalFilter[] = [
       {
-        field: "description",
+        field,
         operator: "contains",
         value,
       },
@@ -45,7 +47,7 @@ export default function ReportList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateRange[1]).endOf('day').toISOString(),
+        value: dayjs(dateRange[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
@@ -69,37 +71,16 @@ export default function ReportList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateStrings[1]).endOf('day').toISOString(),
+        value: dayjs(dateStrings[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
 
   return (
-    <List
-      headerButtons={[
-        <Input.Search
-          key="search"
-          placeholder="Rechercher une description..."
-          allowClear
-          onSearch={handleSearch}
-          style={{ width: 200, marginRight: 8 }}
-        />,
-        <RangePicker
-          key="date-range"
-          onChange={handleDateRangeChange}
-          style={{ marginRight: 8 }}
-          placeholder={['Début', 'Fin']}
-          allowClear
-        />,
-      ]}
-    >
+    <List headerButtons={[]}>
       <Table {...tableProps} rowKey="id">
-        <Table.Column 
-          dataIndex="id" 
-          title={"ID"} 
-          sorter
-        />
+        <Table.Column dataIndex="id" title={"ID"} sorter />
         <Table.Column
           dataIndex="description"
           title={"Description"}
@@ -107,6 +88,18 @@ export default function ReportList() {
           render={(value: string) =>
             value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
           }
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Description"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "description");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           dataIndex="recommendation"
@@ -115,6 +108,18 @@ export default function ReportList() {
           render={(value: string) =>
             value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
           }
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Recommandation"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "recommendation");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           dataIndex="is_dangerous"
@@ -138,7 +143,7 @@ export default function ReportList() {
           sorter
         />
         <Table.Column
-          dataIndex={["report_statuses", 0, "date"]}
+          dataIndex={["report_statuses", 0, "status", "name"]}
           title={"Last Updated"}
           sorter
           render={(value: string) => <DateField value={value} />}

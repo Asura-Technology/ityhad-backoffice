@@ -3,6 +3,7 @@
 import {
   DeleteButton,
   EditButton,
+  FilterDropdown,
   List,
   ShowButton,
   useTable,
@@ -17,7 +18,9 @@ const { RangePicker } = DatePicker;
 
 export default function DoctorList() {
   const [search, setSearch] = useState("");
-  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -25,11 +28,10 @@ export default function DoctorList() {
     },
   });
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearch = (value: string, field: string) => {
     const filters: LogicalFilter[] = [
       {
-        field: "user.displayName",
+        field,
         operator: "contains",
         value,
       },
@@ -43,7 +45,7 @@ export default function DoctorList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateRange[1]).endOf('day').toISOString(),
+        value: dayjs(dateRange[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
@@ -67,50 +69,53 @@ export default function DoctorList() {
       filters.push({
         field: "created_at",
         operator: "lte",
-        value: dayjs(dateStrings[1]).endOf('day').toISOString(),
+        value: dayjs(dateStrings[1]).endOf("day").toISOString(),
       } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
 
   return (
-    <List
-      headerButtons={[
-        <Input.Search
-          key="search"
-          placeholder="Rechercher un nom..."
-          allowClear
-          onSearch={handleSearch}
-          style={{ width: 200, marginRight: 8 }}
-        />,
-        <RangePicker
-          key="date-range"
-          onChange={handleDateRangeChange}
-          style={{ marginRight: 8 }}
-          placeholder={['Début', 'Fin']}
-          allowClear
-        />,
-      ]}
-    >
+    <List headerButtons={[]}>
       <Table {...tableProps} rowKey="id">
-        <Table.Column 
-          dataIndex="id" 
-          title={"ID"} 
+        <Table.Column dataIndex="id" title={"ID"} sorter />
+        <Table.Column
+          dataIndex={["user", "displayName"]}
+          title={"Nom"}
           sorter
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Nom"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "displayName");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
-        <Table.Column 
-          dataIndex={["user", "displayName"]} 
-          title={"Nom"} 
+        <Table.Column
+          dataIndex={["user", "email"]}
+          title={"Email"}
           sorter
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Email"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "email");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
-        <Table.Column 
-          dataIndex={["user", "email"]} 
-          title={"Email"} 
-          sorter
-        />
-        <Table.Column 
-          dataIndex={["address", "address1"]} 
-          title={"Adresse"} 
+        <Table.Column
+          dataIndex={["address", "address1"]}
+          title={"Adresse"}
           sorter
         />
         <Table.Column
