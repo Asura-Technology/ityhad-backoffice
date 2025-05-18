@@ -3,18 +3,24 @@
 import {
   DeleteButton,
   EditButton,
+  FilterDropdown,
   List,
   ShowButton,
   useTable,
 } from "@refinedev/antd";
-import { type BaseRecord } from "@refinedev/core";
+import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker } from "antd";
 import React, { useState } from "react";
 import { SCHOOLS_QUERY } from "@queries/schools";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
 
 export default function SchoolList() {
   const [search, setSearch] = useState("");
-  const [date, setDate] = useState<string | undefined>(undefined);
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -22,73 +28,107 @@ export default function SchoolList() {
     },
   });
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    const filters = [
+  const handleSearch = (value: string, field: string) => {
+    const filters: LogicalFilter[] = [
       {
-        field: "name",
-        operator: "contains" as const,
+        field,
+        operator: "contains",
         value,
       },
     ];
-    if (date) {
+    if (dateRange[0] && dateRange[1]) {
       filters.push({
         field: "created_at",
-        operator: "contains" as const,
-        value: date,
-      });
+        operator: "gte",
+        value: dateRange[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateRange[1]).endOf("day").toISOString(),
+      } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
 
-  const handleDateChange = (value: any, dateString: string | string[]) => {
-    const dateVal = Array.isArray(dateString) ? dateString[0] : dateString;
-    setDate(dateVal);
-    const filters = [
+  const handleDateRangeChange = (_: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
+    const filters: LogicalFilter[] = [
       {
         field: "name",
-        operator: "contains" as const,
+        operator: "contains",
         value: search,
       },
     ];
-    if (dateVal) {
+    if (dateStrings[0] && dateStrings[1]) {
       filters.push({
         field: "created_at",
-        operator: "contains" as const,
-        value: dateVal,
-      });
+        operator: "gte",
+        value: dateStrings[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateStrings[1]).endOf("day").toISOString(),
+      } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
 
   return (
-    <List
-      headerButtons={[
-        <Input.Search
-          key="search"
-          placeholder="Rechercher une école..."
-          allowClear
-          onSearch={handleSearch}
-          style={{ width: 200, marginRight: 8 }}
-        />,
-        <DatePicker
-          key="date"
-          onChange={handleDateChange}
-          style={{ marginRight: 8 }}
-          placeholder="Date de création"
-        />,
-      ]}
-    >
+    <List headerButtons={[]}>
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex="name" title={"Nom de l'école"} />
+        <Table.Column dataIndex="id" title={"ID"} sorter />
+        <Table.Column
+          dataIndex="name"
+          title={"Nom de l'école"}
+          sorter
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Ecole"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "name");
+                }}
+              />
+            </FilterDropdown>
+          )}
+        />
         <Table.Column
           dataIndex={["user", "displayName"]}
           title={"Nom du contact"}
+          sorter
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Nom du Contact"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "displayName");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           dataIndex={["user", "email"]}
           title={"Email du contact"}
+          sorter
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Input
+                placeholder="Rechercher Email"
+                allowClear
+                onPressEnter={(e) => {
+                  const value = (e.target as HTMLInputElement).value;
+                  handleSearch(value, "email");
+                }}
+              />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           title={"Actions"}

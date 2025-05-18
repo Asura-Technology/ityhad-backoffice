@@ -24,15 +24,21 @@ import { useTable } from "@refinedev/antd";
 import { useList } from "@refinedev/core";
 import { REPORTS_QUERY } from "@queries/reports";
 import { DateField } from "@refinedev/antd";
+import dayjs from "dayjs";
+import { CrudFilter, LogicalFilter } from "@refinedev/core";
 
 const { RangePicker } = DatePicker;
 
 export default function DashboardPage() {
+  const [searchText, setSearchText] = React.useState<string>("");
+  const [dateRange, setDateRange] = React.useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
+
   // Table data
-  const { tableProps } = useTable({
+  const { tableProps, setFilters } = useTable({
     resource: "report",
     meta: { fields: REPORTS_QUERY },
-    pagination: { pageSize: 8 },
   });
 
   // Stats data
@@ -43,7 +49,103 @@ export default function DashboardPage() {
   });
   const reports = reportsList?.data || [];
 
-  // Calculate stats
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    const filters: LogicalFilter[] = [
+      {
+        field: "description",
+        operator: "contains",
+        value,
+      },
+    ];
+    if (dateRange[0] && dateRange[1]) {
+      filters.push({
+        field: "report_statuses.date",
+        operator: "gte",
+        value: dateRange[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "report_statuses.date",
+        operator: "lte",
+        value: dateRange[1],
+      } as LogicalFilter);
+    }
+    setFilters(filters, "replace");
+  };
+
+  const handleDateRangeChange = (_: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
+    const filters: LogicalFilter[] = [
+      {
+        field: "description",
+        operator: "contains",
+        value: searchText,
+      },
+    ];
+    if (dateStrings[0] && dateStrings[1]) {
+      filters.push({
+        field: "report_statuses.date",
+        operator: "gte",
+        value: dateStrings[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "report_statuses.date",
+        operator: "lte",
+        value: dateStrings[1],
+      } as LogicalFilter);
+    }
+    setFilters(filters, "replace");
+  };
+
+  const handleExport = () => {
+    // Get the current filtered data
+    const data = tableProps.dataSource || [];
+
+    // Define CSV headers
+    const headers = [
+      "ID",
+      "Description",
+      "Recommendation",
+      "Dangerous",
+      "Private",
+      "Latest Status",
+      "Last Updated",
+    ];
+
+    // Convert data to CSV rows
+    const csvRows = data.map((report: any) => [
+      report.id,
+      report.description?.replace(/"/g, '""') || "", // Escape quotes in text
+      report.recommendation?.replace(/"/g, '""') || "",
+      report.is_dangerous ? "Yes" : "No",
+      report.is_private ? "Yes" : "No",
+      report.report_statuses?.[0]?.status?.name || "",
+      report.report_statuses?.[0]?.date
+        ? dayjs(report.report_statuses[0].date).format("DD/MM/YYYY HH:mm")
+        : "",
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `reports_export_${dayjs().format("YYYY-MM-DD_HH-mm")}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Calculate stats using the filtered reports from the API
   const totalReports = reports.length;
   const processedReports = reports.filter(
     (r: any) => r.report_statuses?.[0]?.status?.code === "COMPLETED"
@@ -90,11 +192,13 @@ export default function DashboardPage() {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      sorter: true,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      sorter: true,
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -102,6 +206,7 @@ export default function DashboardPage() {
       title: "Recommendation",
       dataIndex: "recommendation",
       key: "recommendation",
+      sorter: true,
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -109,6 +214,7 @@ export default function DashboardPage() {
       title: "Dangerous",
       dataIndex: "is_dangerous",
       key: "is_dangerous",
+      sorter: true,
       render: (value: boolean) => (
         <Tag color={value ? "red" : "green"}>{value ? "Yes" : "No"}</Tag>
       ),
@@ -117,6 +223,7 @@ export default function DashboardPage() {
       title: "Private",
       dataIndex: "is_private",
       key: "is_private",
+      sorter: true,
       render: (value: boolean) => (
         <Tag color={value ? "blue" : "default"}>{value ? "Yes" : "No"}</Tag>
       ),
@@ -125,11 +232,13 @@ export default function DashboardPage() {
       title: "Latest Status",
       dataIndex: ["report_statuses", 0, "status", "name"],
       key: "latest_status",
+      sorter: true,
     },
     {
       title: "Last Updated",
       dataIndex: ["report_statuses", 0, "date"],
       key: "last_updated",
+      sorter: true,
       render: (value: string) => (
         <DateField value={value} format="DD/MM/YYYY HH:mm" locales="fr-FR" />
       ),
@@ -141,16 +250,24 @@ export default function DashboardPage() {
       {/* Filter Bar */}
       <Row gutter={16} style={{ marginBottom: 24 }} align="middle">
         <Col>
-          <RangePicker />
+          <RangePicker onChange={handleDateRangeChange} allowClear />
         </Col>
         <Col>
-          <Input.Search placeholder="Recherche..." style={{ width: 200 }} />
+          <Input.Search
+            placeholder="Recherche..."
+            style={{ width: 200 }}
+            onSearch={handleSearch}
+            allowClear
+          />
         </Col>
         <Col>
-          <Button type="primary">Filtrer</Button>
-        </Col>
-        <Col>
-          <Button>Export</Button>
+          <Button
+            type="primary"
+            onClick={handleExport}
+            icon={<FileTextOutlined />}
+          >
+            Export
+          </Button>
         </Col>
       </Row>
 
