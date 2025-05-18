@@ -5,7 +5,7 @@ interface Config {
   NEXT_PUBLIC_HASURA_ADMIN_SECRET: string;
 }
 
-function getConfig(): Config {
+export default function getConfig(): Config {
   if (typeof window !== "undefined" && window.__ENV) {
     // running in browser - production/runtime injected env
     return {
@@ -22,6 +22,3 @@ function getConfig(): Config {
     };
   }
 }
-
-const config = getConfig();
-export default config;
