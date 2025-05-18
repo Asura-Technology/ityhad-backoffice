@@ -9,12 +9,17 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
-import { Space, Table, Tag, Input } from "antd";
+import { Space, Table, Tag, Input, DatePicker } from "antd";
 import React, { useState } from "react";
 import { REPORTS_QUERY } from "@queries/reports";
+import dayjs from "dayjs";
+import { CrudFilter, LogicalFilter } from "@refinedev/core";
+
+const { RangePicker } = DatePicker;
 
 export default function ReportList() {
   const [search, setSearch] = useState("");
+  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -24,16 +29,50 @@ export default function ReportList() {
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    setFilters(
-      [
-        {
-          field: "description",
-          operator: "contains",
-          value,
-        },
-      ],
-      "replace"
-    );
+    const filters: LogicalFilter[] = [
+      {
+        field: "description",
+        operator: "contains",
+        value,
+      },
+    ];
+    if (dateRange[0] && dateRange[1]) {
+      filters.push({
+        field: "created_at",
+        operator: "gte",
+        value: dateRange[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateRange[1]).endOf('day').toISOString(),
+      } as LogicalFilter);
+    }
+    setFilters(filters, "replace");
+  };
+
+  const handleDateRangeChange = (_: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
+    const filters: LogicalFilter[] = [
+      {
+        field: "description",
+        operator: "contains",
+        value: search,
+      },
+    ];
+    if (dateStrings[0] && dateStrings[1]) {
+      filters.push({
+        field: "created_at",
+        operator: "gte",
+        value: dateStrings[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateStrings[1]).endOf('day').toISOString(),
+      } as LogicalFilter);
+    }
+    setFilters(filters, "replace");
   };
 
   return (
@@ -44,7 +83,14 @@ export default function ReportList() {
           placeholder="Rechercher une description..."
           allowClear
           onSearch={handleSearch}
-          style={{ width: 300 }}
+          style={{ width: 200, marginRight: 8 }}
+        />,
+        <RangePicker
+          key="date-range"
+          onChange={handleDateRangeChange}
+          style={{ marginRight: 8 }}
+          placeholder={['Début', 'Fin']}
+          allowClear
         />,
       ]}
     >

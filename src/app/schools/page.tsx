@@ -7,14 +7,17 @@ import {
   ShowButton,
   useTable,
 } from "@refinedev/antd";
-import { type BaseRecord } from "@refinedev/core";
+import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker } from "antd";
 import React, { useState } from "react";
 import { SCHOOLS_QUERY } from "@queries/schools";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
 
 export default function SchoolList() {
   const [search, setSearch] = useState("");
-  const [date, setDate] = useState<string | undefined>(undefined);
+  const [dateRange, setDateRange] = React.useState<[string | undefined, string | undefined]>([undefined, undefined]);
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -24,39 +27,48 @@ export default function SchoolList() {
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    const filters = [
+    const filters: LogicalFilter[] = [
       {
         field: "name",
-        operator: "contains" as const,
+        operator: "contains",
         value,
       },
     ];
-    if (date) {
+    if (dateRange[0] && dateRange[1]) {
       filters.push({
         field: "created_at",
-        operator: "contains" as const,
-        value: date,
-      });
+        operator: "gte",
+        value: dateRange[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateRange[1]).endOf('day').toISOString(),
+      } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
 
-  const handleDateChange = (value: any, dateString: string | string[]) => {
-    const dateVal = Array.isArray(dateString) ? dateString[0] : dateString;
-    setDate(dateVal);
-    const filters = [
+  const handleDateRangeChange = (_: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
+    const filters: LogicalFilter[] = [
       {
         field: "name",
-        operator: "contains" as const,
+        operator: "contains",
         value: search,
       },
     ];
-    if (dateVal) {
+    if (dateStrings[0] && dateStrings[1]) {
       filters.push({
         field: "created_at",
-        operator: "contains" as const,
-        value: dateVal,
-      });
+        operator: "gte",
+        value: dateStrings[0],
+      } as LogicalFilter);
+      filters.push({
+        field: "created_at",
+        operator: "lte",
+        value: dayjs(dateStrings[1]).endOf('day').toISOString(),
+      } as LogicalFilter);
     }
     setFilters(filters, "replace");
   };
@@ -71,11 +83,12 @@ export default function SchoolList() {
           onSearch={handleSearch}
           style={{ width: 200, marginRight: 8 }}
         />,
-        <DatePicker
-          key="date"
-          onChange={handleDateChange}
+        <RangePicker
+          key="date-range"
+          onChange={handleDateRangeChange}
           style={{ marginRight: 8 }}
-          placeholder="Date de création"
+          placeholder={['Début', 'Fin']}
+          allowClear
         />,
       ]}
     >
