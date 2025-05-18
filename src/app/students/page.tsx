@@ -93,10 +93,26 @@ export default function StudentList() {
       ]}
     >
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex={["user", "displayName"]} title={"Nom"} />
-        <Table.Column dataIndex={["user", "email"]} title={"Email"} />
-        <Table.Column dataIndex={["school", "name"]} title={"École"} />
+        <Table.Column 
+          dataIndex="id" 
+          title={"ID"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["user", "displayName"]} 
+          title={"Nom"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["user", "email"]} 
+          title={"Email"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["school", "name"]} 
+          title={"École"} 
+          sorter
+        />
         <Table.Column
           title={"Actions"}
           dataIndex="actions"

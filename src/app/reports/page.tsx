@@ -95,10 +95,15 @@ export default function ReportList() {
       ]}
     >
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} />
+        <Table.Column 
+          dataIndex="id" 
+          title={"ID"} 
+          sorter
+        />
         <Table.Column
           dataIndex="description"
           title={"Description"}
+          sorter
           render={(value: string) =>
             value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
           }
@@ -106,6 +111,7 @@ export default function ReportList() {
         <Table.Column
           dataIndex="recommendation"
           title={"Recommendation"}
+          sorter
           render={(value: string) =>
             value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
           }
@@ -113,6 +119,7 @@ export default function ReportList() {
         <Table.Column
           dataIndex="is_dangerous"
           title={"Dangerous"}
+          sorter
           render={(value: boolean) => (
             <Tag color={value ? "red" : "green"}>{value ? "Yes" : "No"}</Tag>
           )}
@@ -120,6 +127,7 @@ export default function ReportList() {
         <Table.Column
           dataIndex="is_private"
           title={"Private"}
+          sorter
           render={(value: boolean) => (
             <Tag color={value ? "blue" : "default"}>{value ? "Yes" : "No"}</Tag>
           )}
@@ -127,10 +135,12 @@ export default function ReportList() {
         <Table.Column
           dataIndex={["report_statuses", 0, "status", "name"]}
           title={"Latest Status"}
+          sorter
         />
         <Table.Column
           dataIndex={["report_statuses", 0, "date"]}
           title={"Last Updated"}
+          sorter
           render={(value: string) => <DateField value={value} />}
         />
         <Table.Column

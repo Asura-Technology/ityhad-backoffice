@@ -79,11 +79,13 @@ export default function TestimonyList() {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      sorter: true,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      sorter: true,
       render: (value: string) =>
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
@@ -91,21 +93,25 @@ export default function TestimonyList() {
       title: "Lieu",
       dataIndex: "place",
       key: "place",
+      sorter: true,
     },
     {
       title: "Élève",
       dataIndex: ["student", "user", "displayName"],
       key: "student",
+      sorter: true,
     },
     {
       title: "Dernier statut",
       dataIndex: ["testimony_statuses", 0, "status", "name"],
       key: "latest_status",
+      sorter: true,
     },
     {
       title: "Dernière mise à jour",
       dataIndex: ["testimony_statuses", 0, "date"],
       key: "last_updated",
+      sorter: true,
       render: (value: string) => (
         <DateField value={value} format="DD/MM/YYYY HH:mm" locales="fr-FR" />
       ),

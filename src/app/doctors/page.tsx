@@ -93,10 +93,26 @@ export default function DoctorList() {
       ]}
     >
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex={["user", "displayName"]} title={"Nom"} />
-        <Table.Column dataIndex={["user", "email"]} title={"Email"} />
-        <Table.Column dataIndex={["address", "address1"]} title={"Adresse"} />
+        <Table.Column 
+          dataIndex="id" 
+          title={"ID"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["user", "displayName"]} 
+          title={"Nom"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["user", "email"]} 
+          title={"Email"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex={["address", "address1"]} 
+          title={"Adresse"} 
+          sorter
+        />
         <Table.Column
           title={"Actions"}
           dataIndex="actions"

@@ -93,15 +93,25 @@ export default function SchoolList() {
       ]}
     >
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex="name" title={"Nom de l'école"} />
+        <Table.Column 
+          dataIndex="id" 
+          title={"ID"} 
+          sorter
+        />
+        <Table.Column 
+          dataIndex="name" 
+          title={"Nom de l'école"} 
+          sorter
+        />
         <Table.Column
           dataIndex={["user", "displayName"]}
           title={"Nom du contact"}
+          sorter
         />
         <Table.Column
           dataIndex={["user", "email"]}
           title={"Email du contact"}
+          sorter
         />
         <Table.Column
           title={"Actions"}
