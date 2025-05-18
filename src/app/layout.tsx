@@ -8,6 +8,7 @@ import "@refinedev/antd/dist/reset.css";
 import { ColorModeContextProvider } from "@contexts/color-mode";
 import { RefineWrapper } from "@components/refine-wrapper";
 import { QueryProvider } from "@providers/query-provider";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "iThad",
@@ -28,6 +29,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <Script src="/runtime-env.js" strategy="beforeInteractive" />
       <body>
         <Suspense>
           {/* <GitHubBanner /> */}
