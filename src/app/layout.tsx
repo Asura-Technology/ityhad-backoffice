@@ -33,7 +33,7 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-        <Script src="/runtime-env.js" strategy="beforeInteractive" />
+        <script src="/runtime-env.js" defer />
       </head>
       <body>
         <Suspense>
