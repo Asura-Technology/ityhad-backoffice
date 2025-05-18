@@ -71,6 +71,10 @@ ENV PORT=3000
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
+
+# copy in our entrypoint loader
+COPY entrypoint.sh ./
+RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 
 CMD ["node", "server.js"]
