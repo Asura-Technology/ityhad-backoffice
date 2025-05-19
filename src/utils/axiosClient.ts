@@ -1,0 +1,9 @@
+import axios from "axios";
+const axiosClient = axios.create({
+  baseURL: "/api/auth",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export default axiosClient;

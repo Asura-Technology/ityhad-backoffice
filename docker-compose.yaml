@@ -1,0 +1,9 @@
+services:
+  backoffice:
+    build: .
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_HASURA_API_URL: "https://api.ityhad.com/v1/graphql"
+      NEXT_PUBLIC_HASURA_ADMIN_SECRET: "ityhad2025"
+    expose:
+      - "3000"

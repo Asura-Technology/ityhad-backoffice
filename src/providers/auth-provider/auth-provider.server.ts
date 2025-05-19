@@ -1,5 +1,6 @@
 import type { AuthProvider } from "@refinedev/core";
 import { cookies } from "next/headers";
+import type { Session } from "@/types/auth";
 
 type UserRole = "admin" | "school" | "doctor" | "student";
 
@@ -17,8 +18,8 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
 
     if (auth) {
       try {
-        const user = JSON.parse(auth.value) as User;
-        if (user.roles && user.roles.length > 0) {
+        const authUser = JSON.parse(auth.value) as Session;
+        if (authUser) {
           return {
             authenticated: true,
           };

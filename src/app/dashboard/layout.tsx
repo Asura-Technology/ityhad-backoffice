@@ -7,7 +7,7 @@ export default async function DashboardLayout({
   children,
 }: React.PropsWithChildren) {
   const data = await getData();
-
+  console.log("Dashboard layout data:", { data });
   if (!data.authenticated) {
     return redirect(data?.redirectTo || "/login");
   }

@@ -1,13 +1,14 @@
 "use client";
 
-import getConfig from "@config";
 import dataProviderHasura, { GraphQLClient } from "@refinedev/hasura";
+import { getAccessToken } from "@utils/tokenManager";
 
-const { NEXT_PUBLIC_HASURA_API_URL, NEXT_PUBLIC_HASURA_ADMIN_SECRET } =
-  getConfig();
-export const client = new GraphQLClient(NEXT_PUBLIC_HASURA_API_URL, {
+// read the cookie named "accessToken"
+const accessToken = getAccessToken();
+
+export const client = new GraphQLClient("/api/graphql", {
   headers: {
-    "x-hasura-admin-secret": NEXT_PUBLIC_HASURA_ADMIN_SECRET,
+    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
   },
 });
 

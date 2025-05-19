@@ -6,6 +6,7 @@ declare global {
     __ENV: {
       NEXT_PUBLIC_HASURA_API_URL: string;
       NEXT_PUBLIC_HASURA_ADMIN_SECRET: string;
+      NEXT_PUBLIC_AUTH_API: string;
     };
   }
 }
