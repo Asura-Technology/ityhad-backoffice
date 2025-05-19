@@ -60,8 +60,6 @@ const allResources = [
     name: "report",
     list: "/reports",
     show: "/reports/show/:id",
-    create: "/reports/create",
-    edit: "/reports/edit/:id",
     meta: {
       canDelete: true,
       icon: <FileTextOutlined />,
@@ -72,8 +70,6 @@ const allResources = [
     name: "testimony",
     list: "/testimonies",
     show: "/testimonies/show/:id",
-    create: "/testimonies/create",
-    edit: "/testimonies/edit/:id",
     meta: {
       canDelete: true,
       icon: <MessageOutlined />,
@@ -83,8 +79,6 @@ const allResources = [
   {
     name: "student",
     list: "/students",
-    create: "/students/create",
-    edit: "/students/edit/:id",
     show: "/students/show/:id",
     meta: {
       canDelete: true,
@@ -95,8 +89,6 @@ const allResources = [
   {
     name: "doctor",
     list: "/doctors",
-    create: "/doctors/create",
-    edit: "/doctors/edit/:id",
     show: "/doctors/show/:id",
     meta: {
       canDelete: true,
@@ -107,8 +99,6 @@ const allResources = [
   {
     name: "school",
     list: "/schools",
-    create: "/schools/create",
-    edit: "/schools/edit/:id",
     show: "/schools/show/:id",
     meta: {
       icon: <BankOutlined />,

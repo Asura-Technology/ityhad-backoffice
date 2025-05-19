@@ -11,7 +11,7 @@ import {
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker } from "antd";
 import React, { useState } from "react";
-import { STUDENTS_QUERY } from "@queries/students";
+import { STUDENTS_QUERY, DELETE_STUDENT } from "@queries/students";
 import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
@@ -24,7 +24,7 @@ export default function StudentList() {
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
-      fields: STUDENTS_QUERY,
+      gqlQuery: STUDENTS_QUERY,
     },
   });
 
@@ -135,12 +135,6 @@ export default function StudentList() {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                title="Modifier"
-              />
               <ShowButton
                 hideText
                 size="small"
@@ -152,6 +146,9 @@ export default function StudentList() {
                 size="small"
                 recordItemId={record.id}
                 title="Supprimer"
+                meta={{
+                  gqlMutation: DELETE_STUDENT,
+                }}
               />
             </Space>
           )}

@@ -11,7 +11,7 @@ import {
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker } from "antd";
 import React, { useState } from "react";
-import { SCHOOLS_QUERY } from "@queries/schools";
+import { SCHOOLS_QUERY, DELETE_SCHOOL } from "@queries/schools";
 import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
@@ -24,7 +24,7 @@ export default function SchoolList() {
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
-      fields: SCHOOLS_QUERY,
+      gqlQuery: SCHOOLS_QUERY,
     },
   });
 
@@ -135,12 +135,6 @@ export default function SchoolList() {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                title="Modifier"
-              />
               <ShowButton
                 hideText
                 size="small"
@@ -152,6 +146,9 @@ export default function SchoolList() {
                 size="small"
                 recordItemId={record.id}
                 title="Supprimer"
+                meta={{
+                  gqlMutation: DELETE_SCHOOL,
+                }}
               />
             </Space>
           )}

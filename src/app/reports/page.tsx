@@ -3,7 +3,6 @@
 import {
   DateField,
   DeleteButton,
-  EditButton,
   FilterDropdown,
   List,
   ShowButton,
@@ -12,7 +11,7 @@ import {
 import { type BaseRecord } from "@refinedev/core";
 import { Space, Table, Tag, Input, DatePicker, Button } from "antd";
 import React, { useState } from "react";
-import { REPORTS_QUERY } from "@queries/reports";
+import { REPORTS_QUERY, DELETE_REPORT } from "@queries/reports";
 import dayjs from "dayjs";
 import { CrudFilter, LogicalFilter } from "@refinedev/core";
 
@@ -26,7 +25,7 @@ export default function ReportList() {
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
-      fields: REPORTS_QUERY,
+      gqlQuery: REPORTS_QUERY,
     },
   });
 
@@ -153,9 +152,15 @@ export default function ReportList() {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
               <ShowButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                meta={{
+                  gqlMutation: DELETE_REPORT,
+                }}
+              />
             </Space>
           )}
         />
