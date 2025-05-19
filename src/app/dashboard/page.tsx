@@ -38,13 +38,13 @@ export default function DashboardPage() {
   // Table data
   const { tableProps, setFilters } = useTable({
     resource: "report",
-    meta: { fields: REPORTS_QUERY },
+    meta: { gqlQuery: REPORTS_QUERY },
   });
 
   // Stats data
   const { data: reportsList } = useList({
     resource: "report",
-    meta: { fields: REPORTS_QUERY },
+    meta: { gqlQuery: REPORTS_QUERY },
     pagination: { pageSize: 1000 },
   });
   const reports = reportsList?.data || [];

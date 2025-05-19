@@ -11,7 +11,7 @@ import {
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker } from "antd";
 import React, { useState } from "react";
-import { DOCTORS_QUERY } from "@queries/doctors";
+import { DOCTORS_QUERY, DELETE_DOCTOR } from "@queries/doctors";
 import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
@@ -24,7 +24,7 @@ export default function DoctorList() {
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
-      fields: DOCTORS_QUERY,
+      gqlQuery: DOCTORS_QUERY,
     },
   });
 
@@ -123,12 +123,6 @@ export default function DoctorList() {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                title="Modifier"
-              />
               <ShowButton
                 hideText
                 size="small"
@@ -140,6 +134,9 @@ export default function DoctorList() {
                 size="small"
                 recordItemId={record.id}
                 title="Supprimer"
+                meta={{
+                  gqlMutation: DELETE_DOCTOR,
+                }}
               />
             </Space>
           )}

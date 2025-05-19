@@ -12,7 +12,7 @@ import {
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Tag, Input, DatePicker } from "antd";
 import React, { useState } from "react";
-import { TESTIMONIES_QUERY } from "@queries/testimonies";
+import { TESTIMONIES_QUERY, DELETE_TESTIMONY } from "@queries/testimonies";
 import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
@@ -25,7 +25,7 @@ export default function TestimonyList() {
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
-      fields: TESTIMONIES_QUERY,
+      gqlQuery: TESTIMONIES_QUERY,
     },
   });
 
@@ -123,8 +123,9 @@ export default function TestimonyList() {
     },
     {
       title: "Élève",
-      dataIndex: ["student", "user", "displayName"],
+      dataIndex: "victim",
       key: "student",
+      render: (value: string) => value || "N/A",
       sorter: true,
     },
     {
@@ -145,11 +146,17 @@ export default function TestimonyList() {
     {
       title: "Actions",
       dataIndex: "actions",
-      render: (_: any, record: BaseRecord) => (
+      render: (_: unknown, record: BaseRecord) => (
         <Space>
           <ShowButton hideText size="small" recordItemId={record.id} />
-          <EditButton hideText size="small" recordItemId={record.id} />
-          <DeleteButton hideText size="small" recordItemId={record.id} />
+          <DeleteButton
+            hideText
+            size="small"
+            recordItemId={record.id}
+            meta={{
+              gqlMutation: DELETE_TESTIMONY,
+            }}
+          />
         </Space>
       ),
     },
