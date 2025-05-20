@@ -105,11 +105,11 @@ export default function DashboardPage() {
     const headers = [
       "ID",
       "Description",
-      "Recommendation",
-      "Dangerous",
-      "Private",
-      "Latest Status",
-      "Last Updated",
+      "Recommandation",
+      "Dangereux",
+      "Privé",
+      "Dernier Statut",
+      "Dernière Mise à Jour",
     ];
 
     // Convert data to CSV rows
@@ -117,8 +117,8 @@ export default function DashboardPage() {
       report.id,
       report.description?.replace(/"/g, '""') || "", // Escape quotes in text
       report.recommendation?.replace(/"/g, '""') || "",
-      report.is_dangerous ? "Yes" : "No",
-      report.is_private ? "Yes" : "No",
+      report.is_dangerous ? "Oui" : "Non",
+      report.is_private ? "Oui" : "Non",
       report.report_statuses?.[0]?.status?.name || "",
       report.report_statuses?.[0]?.date
         ? dayjs(report.report_statuses[0].date).format("DD/MM/YYYY HH:mm")
@@ -203,7 +203,7 @@ export default function DashboardPage() {
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
     {
-      title: "Recommendation",
+      title: "Recommandation",
       dataIndex: "recommendation",
       key: "recommendation",
       sorter: true,
@@ -211,31 +211,31 @@ export default function DashboardPage() {
         value?.slice(0, 100) + (value?.length > 100 ? "..." : ""),
     },
     {
-      title: "Dangerous",
+      title: "Dangereux",
       dataIndex: "is_dangerous",
       key: "is_dangerous",
       sorter: true,
       render: (value: boolean) => (
-        <Tag color={value ? "red" : "green"}>{value ? "Yes" : "No"}</Tag>
+        <Tag color={value ? "red" : "green"}>{value ? "Oui" : "Non"}</Tag>
       ),
     },
     {
-      title: "Private",
+      title: "Privé",
       dataIndex: "is_private",
       key: "is_private",
       sorter: true,
       render: (value: boolean) => (
-        <Tag color={value ? "blue" : "default"}>{value ? "Yes" : "No"}</Tag>
+        <Tag color={value ? "blue" : "default"}>{value ? "Oui" : "Non"}</Tag>
       ),
     },
     {
-      title: "Latest Status",
+      title: "Dernier Statut",
       dataIndex: ["report_statuses", 0, "status", "name"],
       key: "latest_status",
       sorter: true,
     },
     {
-      title: "Last Updated",
+      title: "Dernière Mise à Jour",
       dataIndex: ["report_statuses", 0, "date"],
       key: "last_updated",
       sorter: true,

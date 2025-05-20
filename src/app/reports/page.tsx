@@ -9,13 +9,15 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
-import { Space, Table, Tag, Input, DatePicker, Button } from "antd";
+import { Space, Table, Tag, Input, DatePicker, Button, Typography } from "antd";
 import React, { useState } from "react";
 import { REPORTS_QUERY, DELETE_REPORT } from "@queries/reports";
 import dayjs from "dayjs";
 import { CrudFilter, LogicalFilter } from "@refinedev/core";
+import { Protected } from "@permissions/layout";
 
 const { RangePicker } = DatePicker;
+const { Text } = Typography;
 
 export default function ReportList() {
   const [search, setSearch] = useState("");
@@ -77,94 +79,114 @@ export default function ReportList() {
   };
 
   return (
-    <List headerButtons={[]}>
-      <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} sorter />
-        <Table.Column
-          dataIndex="description"
-          title={"Description"}
-          sorter
-          render={(value: string) =>
-            value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
-          }
-          filterDropdown={(props) => (
-            <FilterDropdown {...props}>
-              <Input
-                placeholder="Rechercher Description"
-                allowClear
-                onPressEnter={(e) => {
-                  const value = (e.target as HTMLInputElement).value;
-                  handleSearch(value, "description");
-                }}
-              />
-            </FilterDropdown>
-          )}
-        />
-        <Table.Column
-          dataIndex="recommendation"
-          title={"Recommendation"}
-          sorter
-          render={(value: string) =>
-            value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
-          }
-          filterDropdown={(props) => (
-            <FilterDropdown {...props}>
-              <Input
-                placeholder="Rechercher Recommandation"
-                allowClear
-                onPressEnter={(e) => {
-                  const value = (e.target as HTMLInputElement).value;
-                  handleSearch(value, "recommendation");
-                }}
-              />
-            </FilterDropdown>
-          )}
-        />
-        <Table.Column
-          dataIndex="is_dangerous"
-          title={"Dangerous"}
-          sorter
-          render={(value: boolean) => (
-            <Tag color={value ? "red" : "green"}>{value ? "Yes" : "No"}</Tag>
-          )}
-        />
-        <Table.Column
-          dataIndex="is_private"
-          title={"Private"}
-          sorter
-          render={(value: boolean) => (
-            <Tag color={value ? "blue" : "default"}>{value ? "Yes" : "No"}</Tag>
-          )}
-        />
-        <Table.Column
-          dataIndex={["report_statuses", 0, "status", "name"]}
-          title={"Latest Status"}
-          sorter
-        />
-        <Table.Column
-          dataIndex={["report_statuses", 0, "status", "name"]}
-          title={"Last Updated"}
-          sorter
-          render={(value: string) => <DateField value={value} />}
-        />
-        <Table.Column
-          title={"Actions"}
-          dataIndex="actions"
-          render={(_, record: BaseRecord) => (
-            <Space>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                meta={{
-                  gqlMutation: DELETE_REPORT,
-                }}
-              />
-            </Space>
-          )}
-        />
-      </Table>
-    </List>
+    <Protected
+      action="read"
+      subject="report"
+      fallback={
+        <div style={{ padding: "20px", textAlign: "center" }}>
+          <Text type="danger">
+            Vous n&apos;avez pas la permission d&apos;accéder à cette page.
+          </Text>
+        </div>
+      }
+    >
+      <List headerButtons={[]}>
+        <Table {...tableProps} rowKey="id">
+          <Table.Column dataIndex="id" title={"ID"} sorter />
+          <Table.Column
+            dataIndex="description"
+            title={"Description"}
+            sorter
+            render={(value: string) =>
+              value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
+            }
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input
+                  placeholder="Rechercher Description"
+                  allowClear
+                  onPressEnter={(e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    handleSearch(value, "description");
+                  }}
+                />
+              </FilterDropdown>
+            )}
+          />
+          <Table.Column
+            dataIndex="recommendation"
+            title={"Recommandation"}
+            sorter
+            render={(value: string) =>
+              value?.slice(0, 100) + (value?.length > 100 ? "..." : "")
+            }
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input
+                  placeholder="Rechercher Recommandation"
+                  allowClear
+                  onPressEnter={(e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    handleSearch(value, "recommendation");
+                  }}
+                />
+              </FilterDropdown>
+            )}
+          />
+          <Table.Column
+            dataIndex="is_dangerous"
+            title={"Dangereux"}
+            sorter
+            render={(value: boolean) => (
+              <Tag color={value ? "red" : "green"}>{value ? "Oui" : "Non"}</Tag>
+            )}
+          />
+          <Table.Column
+            dataIndex="is_private"
+            title={"Privé"}
+            sorter
+            render={(value: boolean) => (
+              <Tag color={value ? "blue" : "default"}>
+                {value ? "Oui" : "Non"}
+              </Tag>
+            )}
+          />
+          <Table.Column
+            dataIndex={["report_statuses", 0, "status", "name"]}
+            title={"Dernier Statut"}
+            sorter
+          />
+          <Table.Column
+            dataIndex={["report_statuses", 0, "status", "name"]}
+            title={"Dernière Mise à Jour"}
+            sorter
+            render={(value: string) => <DateField value={value} />}
+          />
+          <Table.Column
+            title={"Actions"}
+            dataIndex="actions"
+            render={(_, record: BaseRecord) => (
+              <Space>
+                <ShowButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  title="Afficher"
+                />
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  title="Supprimer"
+                  meta={{
+                    gqlMutation: DELETE_REPORT,
+                  }}
+                />
+              </Space>
+            )}
+          />
+        </Table>
+      </List>
+    </Protected>
   );
 }

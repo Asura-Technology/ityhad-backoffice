@@ -20,17 +20,20 @@ import { useRouter } from "next/navigation";
 const { Text } = Typography;
 const { useToken } = theme;
 
-type IUser = {
-  id: number;
-  name: string;
-  avatar: string;
+export type IUser = {
+  id: string;
+  displayName: string;
+  avatarUrl: string;
+  email: string;
+  roles: string[];
 };
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
 }) => {
   const { token } = useToken();
-  const { data: user } = useGetIdentity<IUser>();
+  const { data: userData } = useGetIdentity<{ user: IUser }>();
+  const user = userData?.user;
   const { mode, setMode } = useContext(ColorModeContext);
   const { mutate: logout } = useLogout();
   const router = useRouter();
@@ -74,13 +77,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
           onChange={() => setMode(mode === "light" ? "dark" : "light")}
           defaultChecked={mode === "dark"}
         />
-        {(user?.name || user?.avatar) && (
+        {(user?.displayName || user?.avatarUrl) && (
           <Space style={{ marginLeft: "8px" }} size="middle">
-            {user?.name && <Text strong>{user.name}</Text>}
+            {user?.displayName && <Text strong>{user.displayName}</Text>}
             <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>
               <Avatar
-                src={user?.avatar}
-                alt={user?.name}
+                src={user?.avatarUrl}
+                alt={user?.displayName}
                 style={{ cursor: "pointer" }}
               />
             </Dropdown>
