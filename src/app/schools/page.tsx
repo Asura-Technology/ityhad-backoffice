@@ -9,12 +9,14 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
-import { Space, Table, Input, DatePicker } from "antd";
+import { Space, Table, Input, DatePicker, Typography } from "antd";
 import React, { useState } from "react";
 import { SCHOOLS_QUERY, DELETE_SCHOOL } from "@queries/schools";
 import dayjs from "dayjs";
+import { Protected } from "@permissions/layout";
 
 const { RangePicker } = DatePicker;
+const { Text } = Typography;
 
 export default function SchoolList() {
   const [search, setSearch] = useState("");
@@ -76,84 +78,96 @@ export default function SchoolList() {
   };
 
   return (
-    <List headerButtons={[]}>
-      <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={"ID"} sorter />
-        <Table.Column
-          dataIndex="name"
-          title={"Nom de l'école"}
-          sorter
-          filterDropdown={(props) => (
-            <FilterDropdown {...props}>
-              <Input
-                placeholder="Rechercher Ecole"
-                allowClear
-                onPressEnter={(e) => {
-                  const value = (e.target as HTMLInputElement).value;
-                  handleSearch(value, "name");
-                }}
-              />
-            </FilterDropdown>
-          )}
-        />
-        <Table.Column
-          dataIndex={["user", "displayName"]}
-          title={"Nom du contact"}
-          sorter
-          filterDropdown={(props) => (
-            <FilterDropdown {...props}>
-              <Input
-                placeholder="Rechercher Nom du Contact"
-                allowClear
-                onPressEnter={(e) => {
-                  const value = (e.target as HTMLInputElement).value;
-                  handleSearch(value, "displayName");
-                }}
-              />
-            </FilterDropdown>
-          )}
-        />
-        <Table.Column
-          dataIndex={["user", "email"]}
-          title={"Email du contact"}
-          sorter
-          filterDropdown={(props) => (
-            <FilterDropdown {...props}>
-              <Input
-                placeholder="Rechercher Email"
-                allowClear
-                onPressEnter={(e) => {
-                  const value = (e.target as HTMLInputElement).value;
-                  handleSearch(value, "email");
-                }}
-              />
-            </FilterDropdown>
-          )}
-        />
-        <Table.Column
-          title={"Actions"}
-          dataIndex="actions"
-          render={(_, record: BaseRecord) => (
-            <Space>
-              <ShowButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                title="Afficher"
-              />
-              <DeleteButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                title="Supprimer"
-                meta={{
-                  gqlMutation: DELETE_SCHOOL,
-                }}
-              />
-            </Space>
-          )}
-        />
-      </Table>
-    </List>
+    <Protected
+      action="read"
+      subject="school"
+      fallback={
+        <div style={{ padding: "20px", textAlign: "center" }}>
+          <Text type="danger">
+            Vous n&apos;avez pas la permission d&apos;accéder à cette page.
+          </Text>
+        </div>
+      }
+    >
+      <List headerButtons={[]}>
+        <Table {...tableProps} rowKey="id">
+          <Table.Column dataIndex="id" title={"ID"} sorter />
+          <Table.Column
+            dataIndex="name"
+            title={"Nom de l'école"}
+            sorter
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input
+                  placeholder="Rechercher Ecole"
+                  allowClear
+                  onPressEnter={(e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    handleSearch(value, "name");
+                  }}
+                />
+              </FilterDropdown>
+            )}
+          />
+          <Table.Column
+            dataIndex={["user", "displayName"]}
+            title={"Nom du contact"}
+            sorter
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input
+                  placeholder="Rechercher Nom du Contact"
+                  allowClear
+                  onPressEnter={(e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    handleSearch(value, "displayName");
+                  }}
+                />
+              </FilterDropdown>
+            )}
+          />
+          <Table.Column
+            dataIndex={["user", "email"]}
+            title={"Email du contact"}
+            sorter
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input
+                  placeholder="Rechercher Email"
+                  allowClear
+                  onPressEnter={(e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    handleSearch(value, "email");
+                  }}
+                />
+              </FilterDropdown>
+            )}
+          />
+          <Table.Column
+            title={"Actions"}
+            dataIndex="actions"
+            render={(_, record: BaseRecord) => (
+              <Space>
+                <ShowButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  title="Afficher"
+                />
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  title="Supprimer"
+                  meta={{
+                    gqlMutation: DELETE_SCHOOL,
+                  }}
+                />
+              </Space>
+            )}
+          />
+        </Table>
+      </List>
+    </Protected>
   );
 }

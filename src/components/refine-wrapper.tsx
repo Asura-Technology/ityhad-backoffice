@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Refine } from "@refinedev/core";
-import { useGetIdentity } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import { useNotificationProvider } from "@refinedev/antd";
 import { RefineKbar } from "@refinedev/kbar";
@@ -18,33 +17,7 @@ import {
 import { dataProvider } from "@providers/data-provider";
 import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
 import { AppIcon } from "@components/app-icon";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-
-type UserRole = "admin" | "school" | "doctor" | "student";
-
-interface User {
-  name: string;
-  email: string;
-  roles: UserRole[];
-  avatar: string;
-}
-
-// Define which resources are available for each role
-const roleResources: Record<UserRole, string[]> = {
-  admin: [
-    "dashboard",
-    "report",
-    "testimony",
-    "student",
-    "doctor",
-    "school",
-    "settings",
-  ],
-  school: ["dashboard", "student", "report", "testimony", "settings"],
-  doctor: ["dashboard", "student", "testimony", "settings"],
-  student: ["dashboard", "testimony", "settings"],
-};
+import { useAbility } from "@hooks/useAbility";
 
 // All available resources
 const allResources = [
@@ -118,41 +91,23 @@ const allResources = [
 export const RefineWrapper: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { data: user, isLoading } = useGetIdentity<User>();
   const [mounted, setMounted] = useState(false);
-  const [currentRole, setCurrentRole] = useState<UserRole>("student");
-  const router = useRouter();
+  const ability = useAbility();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-
-    const updateRole = () => {
-      if (user?.roles?.[0]) {
-        setCurrentRole(user.roles[0]);
-      } else {
-        const auth = Cookies.get("auth");
-        if (auth) {
-          try {
-            const userData = JSON.parse(auth) as User;
-            setCurrentRole(userData.roles[0]);
-          } catch (error) {
-            setCurrentRole("student");
-          }
-        }
-      }
-    };
-
-    updateRole();
-  }, [user, mounted]);
-
-  // Filter resources based on user role
+  // Filter resources based on user abilities
   const allowedResources = allResources.filter((resource) => {
-    const roleAccess = roleResources[currentRole] || [];
-    return roleAccess.includes(resource.name);
+    // Dashboard and settings are always accessible
+    if (resource.name === "dashboard" || resource.name === "settings") {
+      return true;
+    }
+    // Check if user can manage all or read the specific resource
+    return (
+      ability.can("manage", "all") || ability.can("read", resource.name as any)
+    );
   });
 
   if (!mounted) {

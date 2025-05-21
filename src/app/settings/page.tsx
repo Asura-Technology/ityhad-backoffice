@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Card, Form, Input, Button, Typography, message } from "antd";
 import { useGetIdentity } from "@refinedev/core";
 import { SettingOutlined } from "@ant-design/icons";
+import { IUser } from "@components/header";
 
 const { Title } = Typography;
 
@@ -14,7 +15,9 @@ interface User {
 }
 
 export default function SettingsPage() {
-  const { data: user } = useGetIdentity<User>();
+  const { data: userData } = useGetIdentity<{ user: IUser }>();
+  const user = userData?.user;
+
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: any) => {
@@ -37,7 +40,7 @@ export default function SettingsPage() {
       >
         <Title level={4}>Mes informations</Title>
         <p>
-          <b>Nom Complet:</b> {user?.name || "-"}
+          <b>Nom Complet:</b> {user?.displayName || "-"}
         </p>
         <p>
           <b>Email:</b> {user?.email || "-"}

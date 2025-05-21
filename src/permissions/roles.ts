@@ -1,6 +1,6 @@
 // /permissions/roles.ts
 export enum Role {
-  ADMIN = "admin",
+  ADMIN = "super-admin",
   DOCTOR = "doctor",
   SCHOOL = "school",
 }
@@ -9,4 +9,10 @@ export enum Role {
 export type Action = "create" | "read" | "update" | "delete" | "manage";
 
 // /permissions/subjects.ts
-export type Subject = "report" | "testimony" | "all";
+export type Subject =
+  | "report"
+  | "testimony"
+  | "student"
+  | "doctor"
+  | "school"
+  | "all";

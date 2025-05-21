@@ -10,12 +10,14 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
-import { Space, Table, Tag, Input, DatePicker } from "antd";
+import { Space, Table, Tag, Input, DatePicker, Typography } from "antd";
 import React, { useState } from "react";
 import { TESTIMONIES_QUERY, DELETE_TESTIMONY } from "@queries/testimonies";
 import dayjs from "dayjs";
+import { Protected } from "@permissions/layout";
 
 const { RangePicker } = DatePicker;
+const { Text } = Typography;
 
 export default function TestimonyList() {
   const [search, setSearch] = useState("");
@@ -163,8 +165,20 @@ export default function TestimonyList() {
   ];
 
   return (
-    <List headerButtons={[]}>
-      <Table {...tableProps} columns={columns} rowKey="id" />
-    </List>
+    <Protected
+      action="read"
+      subject="testimony"
+      fallback={
+        <div style={{ padding: "20px", textAlign: "center" }}>
+          <Text type="danger">
+            Vous n&apos;avez pas la permission d&apos;accéder à cette page.
+          </Text>
+        </div>
+      }
+    >
+      <List headerButtons={[]}>
+        <Table {...tableProps} columns={columns} rowKey="id" />
+      </List>
+    </Protected>
   );
 }
