@@ -8,7 +8,7 @@ import { DOCTORS_QUERY } from "@queries/doctors";
 export default function DoctorCreate() {
   const { formProps, saveButtonProps } = useForm({
     meta: {
-      fields: DOCTORS_QUERY,
+      fields: [DOCTORS_QUERY],
     },
   });
 
