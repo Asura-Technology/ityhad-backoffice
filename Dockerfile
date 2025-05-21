@@ -28,6 +28,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV NEXT_PUBLIC_HASURA_API_URL="https://api.ityhad.com/v1/graphql"
+ENV NEXT_PUBLIC_HASURA_ADMIN_SECRET="ityhad2025"
+ENV NEXT_PUBLIC_AUTH_API="https://auth.ityhad.com"
+ENV NEXT_PUBLIC_APP_URL="https://app.ityhad.com"
+
 # Build Next.js refine app
 RUN yarn build
 
