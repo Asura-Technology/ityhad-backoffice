@@ -131,13 +131,20 @@ export default function TestimonyList() {
       sorter: true,
     },
     {
-      title: "Dernier statut",
-      dataIndex: ["testimony_statuses", 0, "status", "name"],
+      title: "Statut",
+      dataIndex: ["testimony_statuses"],
       key: "latest_status",
       sorter: true,
+      render: (statuses: any[]) => {
+        if (!statuses || statuses.length === 0) return "N/A";
+        const sortedStatuses = [...statuses].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        return sortedStatuses[0]?.status?.name || "N/A";
+      },
     },
     {
-      title: "Dernière mise à jour",
+      title: "Date du statut",
       dataIndex: ["testimony_statuses", 0, "date"],
       key: "last_updated",
       sorter: true,

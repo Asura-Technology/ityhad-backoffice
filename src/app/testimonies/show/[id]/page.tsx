@@ -24,7 +24,11 @@ export default function TestimonyShow() {
   const { data, isLoading } = queryResult;
 
   const record = data?.data;
-  const latestStatus = record?.testimony_statuses?.[0];
+  const latestStatus = record?.testimony_statuses?.length
+    ? [...record.testimony_statuses].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      )[0]
+    : null;
 
   return (
     <Protected
@@ -92,7 +96,7 @@ export default function TestimonyShow() {
               <Col xs={24} md={8}>
                 <Space direction="vertical" size={4}>
                   <Text type="secondary">État</Text>
-                  <Tag color="red">{latestStatus?.status?.name}</Tag>
+                  <Tag color="gray">{latestStatus?.status?.name}</Tag>
                 </Space>
               </Col>
               <Col xs={24} md={8}>
@@ -103,7 +107,7 @@ export default function TestimonyShow() {
               </Col>
               <Col xs={24} md={8}>
                 <Space direction="vertical" size={4}>
-                  <Text type="secondary">Dernière Mise à Jour</Text>
+                  <Text type="secondary">Date du statut</Text>
                   <Space>
                     <ClockCircleOutlined style={{ color: "#ff4d4f" }} />
                     <DateField value={latestStatus?.date} />

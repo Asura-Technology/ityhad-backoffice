@@ -152,15 +152,50 @@ export default function ReportList() {
             )}
           />
           <Table.Column
-            dataIndex={["report_statuses", 0, "status", "name"]}
-            title={"Dernier Statut"}
-            sorter
+            dataIndex="report_statuses"
+            title={"Statut"}
+            sorter={(a, b) => {
+              const aStatuses = a.report_statuses || [];
+              const bStatuses = b.report_statuses || [];
+              const aLatest = [...aStatuses].sort(
+                (x, y) =>
+                  new Date(y.date).getTime() - new Date(x.date).getTime()
+              )[0];
+              const bLatest = [...bStatuses].sort(
+                (x, y) =>
+                  new Date(y.date).getTime() - new Date(x.date).getTime()
+              )[0];
+              return (aLatest?.status?.name || "").localeCompare(
+                bLatest?.status?.name || ""
+              );
+            }}
+            render={(statuses: any[]) => {
+              if (!statuses || statuses.length === 0) return "N/A";
+              const sortedStatuses = [...statuses].sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              );
+              return sortedStatuses[0]?.status?.name || "N/A";
+            }}
           />
           <Table.Column
-            dataIndex={["report_statuses", 0, "status", "name"]}
-            title={"Dernière Mise à Jour"}
+            dataIndex="report_statuses"
+            title={"Date du statut"}
             sorter
-            render={(value: string) => <DateField value={value} />}
+            render={(statuses: any[]) => {
+              if (!statuses || statuses.length === 0) return "N/A";
+              const sortedStatuses = [...statuses].sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              );
+              return (
+                <DateField
+                  value={sortedStatuses[0]?.date}
+                  format="DD/MM/YYYY HH:mm"
+                  locales="fr-FR"
+                />
+              );
+            }}
           />
           <Table.Column
             title={"Actions"}

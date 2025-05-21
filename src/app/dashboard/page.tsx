@@ -19,13 +19,17 @@ import {
   UserOutlined,
   FileTextOutlined,
   TeamOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 import { useTable } from "@refinedev/antd";
 import { useList } from "@refinedev/core";
 import { REPORTS_QUERY } from "@queries/reports";
+import { TESTIMONIES_QUERY } from "@queries/testimonies";
 import { DateField } from "@refinedev/antd";
 import dayjs from "dayjs";
 import { CrudFilter, LogicalFilter } from "@refinedev/core";
+import { useAbility } from "@hooks/useAbility";
+import { Role } from "@permissions/roles";
 
 const { RangePicker } = DatePicker;
 
@@ -34,6 +38,8 @@ export default function DashboardPage() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const isAdmin = ability.can("manage", "all");
 
   // Table data
   const { tableProps, setFilters } = useTable({
@@ -47,7 +53,13 @@ export default function DashboardPage() {
     meta: { gqlQuery: REPORTS_QUERY },
     pagination: { pageSize: 1000 },
   });
+  const { data: testimoniesList } = useList({
+    resource: "testimony",
+    meta: { gqlQuery: TESTIMONIES_QUERY },
+    pagination: { pageSize: 1000 },
+  });
   const reports = reportsList?.data || [];
+  const testimonies = testimoniesList?.data || [];
 
   const handleSearch = (value: string) => {
     setSearchText(value);
@@ -151,6 +163,9 @@ export default function DashboardPage() {
     (r: any) => r.report_statuses?.[0]?.status?.code === "COMPLETED"
   ).length;
   const unprocessedReports = totalReports - processedReports;
+
+  const totalTestimonies = testimonies.length;
+
   // Example: professionals online (mocked, replace with real query if available)
   const professionalsOnline = 4;
 
@@ -174,17 +189,21 @@ export default function DashboardPage() {
       color: "#52c41a",
     },
     {
-      title: "Délai moyen de réponse",
-      value: "-",
-      icon: <ArrowUpOutlined />,
-      color: "#52c41a",
+      title: "Total des témoignages",
+      value: totalTestimonies,
+      icon: <MessageOutlined />,
+      color: "#1890ff",
     },
-    {
-      title: "Professionnels en ligne",
-      value: professionalsOnline,
-      icon: <UserOutlined />,
-      color: "#faad14",
-    },
+    ...(isAdmin
+      ? [
+          {
+            title: "Professionnels en ligne",
+            value: professionalsOnline,
+            icon: <UserOutlined />,
+            color: "#faad14",
+          },
+        ]
+      : []),
   ];
 
   const columns = [
@@ -229,19 +248,36 @@ export default function DashboardPage() {
       ),
     },
     {
-      title: "Dernier Statut",
-      dataIndex: ["report_statuses", 0, "status", "name"],
+      title: "Statut",
+      dataIndex: ["report_statuses"],
       key: "latest_status",
       sorter: true,
+      render: (statuses: any[]) => {
+        if (!statuses || statuses.length === 0) return "N/A";
+        const sortedStatuses = [...statuses].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        return sortedStatuses[0]?.status?.name || "N/A";
+      },
     },
     {
-      title: "Dernière Mise à Jour",
-      dataIndex: ["report_statuses", 0, "date"],
+      title: "Date du statut",
+      dataIndex: ["report_statuses"],
       key: "last_updated",
       sorter: true,
-      render: (value: string) => (
-        <DateField value={value} format="DD/MM/YYYY HH:mm" locales="fr-FR" />
-      ),
+      render: (statuses: any[]) => {
+        if (!statuses || statuses.length === 0) return "N/A";
+        const sortedStatuses = [...statuses].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        return (
+          <DateField
+            value={sortedStatuses[0]?.date}
+            format="DD/MM/YYYY HH:mm"
+            locales="fr-FR"
+          />
+        );
+      },
     },
   ];
 
