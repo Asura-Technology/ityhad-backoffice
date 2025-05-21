@@ -28,6 +28,7 @@ export function defineAbilitiesFor(role: Role): AppAbility {
     case Role.SCHOOL:
       can(["read", "update"], "report");
       can(["read", "update"], "testimony");
+      can("read", ["student"]);
       break;
     default:
       can("read", ["report", "testimony"]);
