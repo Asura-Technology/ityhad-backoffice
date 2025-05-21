@@ -8,7 +8,7 @@ import { SCHOOLS_QUERY } from "@queries/schools";
 export default function SchoolCreate() {
   const { formProps, saveButtonProps } = useForm({
     meta: {
-      fields: SCHOOLS_QUERY,
+      gqlQuery: SCHOOLS_QUERY,
     },
   });
 
