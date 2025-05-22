@@ -49,6 +49,21 @@ export const STUDENT_QUERY_ONE = gql`
   }
 `;
 
+export const CREATE_STUDENT = gql`
+  mutation CreateStudent($object: student_insert_input!) {
+    insert_student_one(object: $object) {
+      id
+      user {
+        displayName
+        email
+      }
+      school {
+        name
+      }
+    }
+  }
+`;
+
 export const DELETE_STUDENT = gql`
   mutation DeleteStudent($id: Int!) {
     delete_student_by_pk(id: $id) {

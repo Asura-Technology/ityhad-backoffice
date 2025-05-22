@@ -7,6 +7,7 @@ import {
   List,
   ShowButton,
   useTable,
+  CreateButton,
 } from "@refinedev/antd";
 import { type BaseRecord, LogicalFilter } from "@refinedev/core";
 import { Space, Table, Input, DatePicker, Typography } from "antd";
@@ -14,6 +15,7 @@ import React, { useState } from "react";
 import { STUDENTS_QUERY, DELETE_STUDENT } from "@queries/students";
 import dayjs from "dayjs";
 import { Protected } from "@permissions/layout";
+import { useAbility } from "@hooks/useAbility";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -23,6 +25,8 @@ export default function StudentList() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const canCreate = ability.can("create", "student");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -89,7 +93,7 @@ export default function StudentList() {
         </div>
       }
     >
-      <List headerButtons={[]}>
+      <List headerButtons={canCreate && <CreateButton />}>
         <Table {...tableProps} rowKey="id">
           <Table.Column dataIndex="id" title={"ID"} sorter />
           <Table.Column

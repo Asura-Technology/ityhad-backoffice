@@ -53,6 +53,7 @@ const allResources = [
     name: "student",
     list: "/students",
     show: "/students/show/:id",
+    create: "/students/create",
     meta: {
       canDelete: true,
       icon: <TeamOutlined />,

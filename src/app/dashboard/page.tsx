@@ -282,25 +282,30 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: "24px" }}>
       {/* Filter Bar */}
-      <Row gutter={16} style={{ marginBottom: 24 }} align="middle">
-        <Col>
-          <RangePicker onChange={handleDateRangeChange} allowClear />
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }} align="middle">
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <RangePicker
+            onChange={handleDateRangeChange}
+            allowClear
+            style={{ width: "100%" }}
+          />
         </Col>
-        <Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <Input.Search
             placeholder="Recherche..."
-            style={{ width: 200 }}
+            style={{ width: "100%" }}
             onSearch={handleSearch}
             allowClear
           />
         </Col>
-        <Col>
+        <Col xs={24} sm={24} md={8} lg={6}>
           <Button
             type="primary"
             onClick={handleExport}
             icon={<FileTextOutlined />}
+            style={{ width: "100%" }}
           >
             Export
           </Button>
@@ -308,9 +313,9 @@ export default function DashboardPage() {
       </Row>
 
       {/* Stats Cards */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {stats.map((stat, idx) => (
-          <Col span={4} key={idx}>
+          <Col xs={24} sm={12} md={8} lg={6} xl={4} key={idx}>
             <Card>
               <Statistic
                 title={stat.title}
@@ -325,7 +330,17 @@ export default function DashboardPage() {
 
       {/* Table */}
       <Card title="Signalements récents">
-        <Table {...tableProps} columns={columns} rowKey="id" />
+        <Table
+          {...tableProps}
+          columns={columns}
+          rowKey="id"
+          scroll={{ x: "max-content" }}
+          pagination={{
+            ...tableProps.pagination,
+            showSizeChanger: true,
+            showTotal: (total) => `Total ${total} items`,
+          }}
+        />
       </Card>
     </div>
   );
