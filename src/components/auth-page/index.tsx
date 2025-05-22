@@ -3,7 +3,7 @@
 import { AuthPage as BaseAuthPage } from "@refinedev/antd";
 import type { AuthPageProps } from "@refinedev/core";
 import { useCallback } from "react";
-import { useLogin, useNavigation } from "@refinedev/core";
+import { useLogin } from "@refinedev/core";
 import { message } from "antd";
 
 interface LoginFormValues {
@@ -14,7 +14,6 @@ interface LoginFormValues {
 
 export const AuthPage = (props: AuthPageProps) => {
   const { mutateAsync: login } = useLogin<LoginFormValues>();
-  const { push } = useNavigation();
 
   const handleSubmit = useCallback(
     async (values: LoginFormValues) => {
@@ -26,7 +25,8 @@ export const AuthPage = (props: AuthPageProps) => {
         });
 
         if (response.success) {
-          push(response.redirectTo || "/");
+          const redirectUrl = response.redirectTo || "/";
+            window.location.replace(redirectUrl);
         } else if (response.error) {
           message.error(response.error.toString());
         }
@@ -36,7 +36,7 @@ export const AuthPage = (props: AuthPageProps) => {
         );
       }
     },
-    [login, push]
+    [login]
   );
 
   return (
