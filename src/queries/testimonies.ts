@@ -15,6 +15,8 @@ export const TESTIMONIES_QUERY = gql`
     ) {
       id
       description
+      place
+      victim
       testimony_statuses {
         id
         status {
