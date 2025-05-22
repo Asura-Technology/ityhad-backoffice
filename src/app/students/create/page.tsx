@@ -31,8 +31,6 @@ export default function StudentCreate() {
     user: { school: { id: string; name: string }; roles: string[] };
   }>();
 
-  console.log("identity", identity);
-
   const [form] = Form.useForm<StudentFormValues>();
   const [loading, setLoading] = useState(false);
   const ability = useAbility();
