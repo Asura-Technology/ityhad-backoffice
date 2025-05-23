@@ -27,6 +27,7 @@ export default function StudentList() {
   >([undefined, undefined]);
   const ability = useAbility();
   const canCreate = ability.can("create", "student");
+  const isAdmin = ability.can("manage", "all");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -93,7 +94,7 @@ export default function StudentList() {
         </div>
       }
     >
-      <List headerButtons={canCreate && <CreateButton />}>
+      <List headerButtons={canCreate && <CreateButton>Ajouter un élève</CreateButton>}>
         <Table {...tableProps} rowKey="id">
           <Table.Column dataIndex="id" title={"ID"} sorter />
           <Table.Column
@@ -158,15 +159,17 @@ export default function StudentList() {
                   recordItemId={record.id}
                   title="Afficher"
                 />
-                <DeleteButton
-                  hideText
-                  size="small"
-                  recordItemId={record.id}
-                  title="Supprimer"
-                  meta={{
-                    gqlMutation: DELETE_STUDENT,
-                  }}
-                />
+                {isAdmin && (
+                  <DeleteButton
+                    hideText
+                    size="small"
+                    recordItemId={record.id}
+                    title="Supprimer"
+                    meta={{
+                      gqlMutation: DELETE_STUDENT,
+                    }}
+                  />
+                )}
               </Space>
             )}
           />

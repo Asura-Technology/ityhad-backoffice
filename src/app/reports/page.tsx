@@ -15,6 +15,7 @@ import { REPORTS_QUERY, DELETE_REPORT } from "@queries/reports";
 import dayjs from "dayjs";
 import { CrudFilter, LogicalFilter } from "@refinedev/core";
 import { Protected } from "@permissions/layout";
+import { useAbility } from "@hooks/useAbility";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -24,6 +25,8 @@ export default function ReportList() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const isAdmin = ability.can("manage", "all");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -152,6 +155,34 @@ export default function ReportList() {
             )}
           />
           <Table.Column
+            dataIndex={["criticity", "name"]}
+            title={"Criticité"}
+            sorter
+            render={(_, record: any) => (
+              <Tag color="orange">{record.criticity?.name || "N/A"}</Tag>
+            )}
+          />
+          <Table.Column
+            dataIndex={["age_group", "name"]}
+            title={"Groupe d'âge"}
+            sorter
+            render={(_, record: any) => record.age_group?.name || "N/A"}
+          />
+          <Table.Column
+            dataIndex={["referral", "name"]}
+            title={"Orientation"}
+            sorter
+            render={(_, record: any) => record.referral?.name || "N/A"}
+          />
+          <Table.Column
+            dataIndex={["impact", "name"]}
+            title={"Impact"}
+            sorter
+            render={(_, record: any) => (
+              <Tag color="purple">{record.impact?.name || "N/A"}</Tag>
+            )}
+          />
+          <Table.Column
             dataIndex="report_statuses"
             title={"Statut"}
             sorter={(a, b) => {
@@ -208,15 +239,17 @@ export default function ReportList() {
                   recordItemId={record.id}
                   title="Afficher"
                 />
-                <DeleteButton
-                  hideText
-                  size="small"
-                  recordItemId={record.id}
-                  title="Supprimer"
-                  meta={{
-                    gqlMutation: DELETE_REPORT,
-                  }}
-                />
+                {isAdmin && (
+                  <DeleteButton
+                    hideText
+                    size="small"
+                    recordItemId={record.id}
+                    title="Supprimer"
+                    meta={{
+                      gqlMutation: DELETE_REPORT,
+                    }}
+                  />
+                )}
               </Space>
             )}
           />

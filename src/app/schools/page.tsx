@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { SCHOOLS_QUERY, DELETE_SCHOOL } from "@queries/schools";
 import dayjs from "dayjs";
 import { Protected } from "@permissions/layout";
+import { useAbility } from "@hooks/useAbility";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -23,6 +24,8 @@ export default function SchoolList() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const isAdmin = ability.can("manage", "all");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -154,15 +157,17 @@ export default function SchoolList() {
                   recordItemId={record.id}
                   title="Afficher"
                 />
-                <DeleteButton
-                  hideText
-                  size="small"
-                  recordItemId={record.id}
-                  title="Supprimer"
-                  meta={{
-                    gqlMutation: DELETE_SCHOOL,
-                  }}
-                />
+                {isAdmin && (
+                  <DeleteButton
+                    hideText
+                    size="small"
+                    recordItemId={record.id}
+                    title="Supprimer"
+                    meta={{
+                      gqlMutation: DELETE_SCHOOL,
+                    }}
+                  />
+                )}
               </Space>
             )}
           />

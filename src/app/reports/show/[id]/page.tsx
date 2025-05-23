@@ -144,6 +144,64 @@ export default function ReportShow() {
               </Col>
             </Row>
           </Card>
+
+          <Card>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <Space align="center">
+                  <SafetyOutlined style={{ fontSize: 24, color: "#ff4d4f" }} />
+                  <Title level={4} style={{ margin: 0, color: "#ff4d4f" }}>
+                    Classification et Impact
+                  </Title>
+                </Space>
+              </Col>
+              <Col span={24}>
+                <Divider style={{ margin: "12px 0", borderColor: "#ffccc7" }} />
+              </Col>
+              <Col xs={24} md={12}>
+                <Space direction="vertical" size={4}>
+                  <Text type="secondary">Criticité</Text>
+                  <Space>
+                    <Tag color="orange">{record?.criticity?.name || "N/A"}</Tag>
+                    <Text type="secondary">({record?.criticity?.code || "N/A"})</Text>
+                  </Space>
+                </Space>
+              </Col>
+              <Col xs={24} md={12}>
+                <Space direction="vertical" size={4}>
+                  <Text type="secondary">Groupe d'âge</Text>
+                  <Space>
+                    <Text>{record?.age_group?.name || "N/A"}</Text>
+                    <Text type="secondary">({record?.age_group?.code || "N/A"})</Text>
+                  </Space>
+                </Space>
+              </Col>
+              <Col xs={24} md={12}>
+                <Space direction="vertical" size={4}>
+                  <Text type="secondary">Orientation</Text>
+                  <Space>
+                    <Text>{record?.referral?.name || "N/A"}</Text>
+                    <Text type="secondary">({record?.referral?.code || "N/A"})</Text>
+                  </Space>
+                </Space>
+              </Col>
+              <Col xs={24} md={12}>
+                <Space direction="vertical" size={4}>
+                  <Text type="secondary">Impact</Text>
+                  <Space>
+                    <Tag color="purple">{record?.impact?.name || "N/A"}</Tag>
+                    <Text type="secondary">({record?.impact?.code || "N/A"})</Text>
+                  </Space>
+                </Space>
+              </Col>
+              <Col xs={24}>
+                <Space direction="vertical" size={4}>
+                  <Text type="secondary">ID École</Text>
+                  <Text>{record?.student?.school_id || "N/A"}</Text>
+                </Space>
+              </Col>
+            </Row>
+          </Card>
         </Space>
       </Show>
     </Protected>

@@ -43,11 +43,11 @@ export const AuthPage = (props: AuthPageProps) => {
     <BaseAuthPage
       {...props}
       formProps={{
-        initialValues: {
-          email: "admin@gmail.com",
-          password: "123456",
-          remember: false,
-        },
+        // initialValues: {
+        //   email: "admin@gmail.com",
+        //   password: "123456",
+        //   remember: false,
+        // },
         onFinish: handleSubmit,
       }}
     />

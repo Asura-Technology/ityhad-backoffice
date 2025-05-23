@@ -12,6 +12,7 @@ import {
   Button,
   Table,
   Space,
+  Typography,
 } from "antd";
 import {
   ArrowUpOutlined,
@@ -23,15 +24,19 @@ import {
 } from "@ant-design/icons";
 import { useTable } from "@refinedev/antd";
 import { useList } from "@refinedev/core";
-import { REPORTS_QUERY } from "@queries/reports";
+import { REPORTS_QUERY, DELETE_REPORT } from "@queries/reports";
 import { TESTIMONIES_QUERY } from "@queries/testimonies";
 import { DateField } from "@refinedev/antd";
 import dayjs from "dayjs";
 import { CrudFilter, LogicalFilter } from "@refinedev/core";
 import { useAbility } from "@hooks/useAbility";
 import { Role } from "@permissions/roles";
+import { Protected } from "@permissions/layout";
+import { ShowButton, DeleteButton } from "@refinedev/antd";
+import { type BaseRecord } from "@refinedev/core";
 
 const { RangePicker } = DatePicker;
+const { Text } = Typography;
 
 export default function DashboardPage() {
   const [searchText, setSearchText] = React.useState<string>("");
@@ -248,6 +253,45 @@ export default function DashboardPage() {
       ),
     },
     {
+      title: "Criticité",
+      dataIndex: ["criticity", "name"],
+      key: "criticity",
+      sorter: true,
+      render: (_: any, record: any) => (
+        <Tag color="orange">{record.criticity?.name || "N/A"}</Tag>
+      ),
+    },
+    {
+      title: "Groupe d'âge",
+      dataIndex: ["age_group", "name"],
+      key: "age_group",
+      sorter: true,
+      render: (_: any, record: any) => record.age_group?.name || "N/A",
+    },
+    {
+      title: "Orientation",
+      dataIndex: ["referral", "name"],
+      key: "referral",
+      sorter: true,
+      render: (_: any, record: any) => record.referral?.name || "N/A",
+    },
+    {
+      title: "Impact",
+      dataIndex: ["impact", "name"],
+      key: "impact",
+      sorter: true,
+      render: (_: any, record: any) => (
+        <Tag color="purple">{record.impact?.name || "N/A"}</Tag>
+      ),
+    },
+    {
+      title: "ID École",
+      dataIndex: ["student", "school_id"],
+      key: "school_id",
+      sorter: true,
+      render: (_: any, record: any) => record.student?.school_id || "N/A",
+    },
+    {
       title: "Statut",
       dataIndex: ["report_statuses"],
       key: "latest_status",
@@ -279,69 +323,103 @@ export default function DashboardPage() {
         );
       },
     },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      render: (_: any, record: BaseRecord) => (
+        <Space>
+          <ShowButton
+            hideText
+            size="small"
+            recordItemId={record.id}
+            title="Afficher"
+          />
+          {isAdmin && (
+            <DeleteButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              title="Supprimer"
+              meta={{
+                gqlMutation: DELETE_REPORT,
+              }}
+            />
+          )}
+        </Space>
+      ),
+    },
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      {/* Filter Bar */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }} align="middle">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <RangePicker
-            onChange={handleDateRangeChange}
-            allowClear
-            style={{ width: "100%" }}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Input.Search
-            placeholder="Recherche..."
-            style={{ width: "100%" }}
-            onSearch={handleSearch}
-            allowClear
-          />
-        </Col>
-        <Col xs={24} sm={24} md={8} lg={6}>
-          <Button
-            type="primary"
-            onClick={handleExport}
-            icon={<FileTextOutlined />}
-            style={{ width: "100%" }}
-          >
-            Export
-          </Button>
-        </Col>
-      </Row>
-
-      {/* Stats Cards */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        {stats.map((stat, idx) => (
-          <Col xs={24} sm={12} md={8} lg={6} xl={4} key={idx}>
-            <Card>
-              <Statistic
-                title={stat.title}
-                value={stat.value}
-                valueStyle={{ color: stat.color }}
-                prefix={stat.icon}
-              />
-            </Card>
+    <Protected
+      action="read"
+      subject="dashboard"
+      fallback={
+        <div style={{ padding: "20px", textAlign: "center" }}>
+          <Text type="danger">
+            Vous n&apos;avez pas la permission d&apos;accéder à cette page.
+          </Text>
+        </div>
+      }
+    >
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Row gutter={[16, 16]} style={{ marginBottom: 24 }} align="middle">
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <RangePicker
+              onChange={handleDateRangeChange}
+              allowClear
+              style={{ width: "100%" }}
+            />
           </Col>
-        ))}
-      </Row>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Input.Search
+              placeholder="Recherche..."
+              style={{ width: "100%" }}
+              onSearch={handleSearch}
+              allowClear
+            />
+          </Col>
+          <Col xs={24} sm={24} md={8} lg={6}>
+            <Button
+              type="primary"
+              onClick={handleExport}
+              icon={<FileTextOutlined />}
+              style={{ width: "100%" }}
+            >
+              Export
+            </Button>
+          </Col>
+        </Row>
 
-      {/* Table */}
-      <Card title="Signalements récents">
-        <Table
-          {...tableProps}
-          columns={columns}
-          rowKey="id"
-          scroll={{ x: "max-content" }}
-          pagination={{
-            ...tableProps.pagination,
-            showSizeChanger: true,
-            showTotal: (total) => `Total ${total} items`,
-          }}
-        />
-      </Card>
-    </div>
+        {/* Stats Cards */}
+        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+          {stats.map((stat, idx) => (
+            <Col xs={24} sm={12} md={8} lg={6} xl={4} key={idx}>
+              <Card>
+                <Statistic
+                  title={stat.title}
+                  value={stat.value}
+                  valueStyle={{ color: stat.color }}
+                  prefix={stat.icon}
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+
+        <Card title="Derniers Signalements">
+          <Table
+            {...tableProps}
+            columns={columns}
+            rowKey="id"
+            pagination={{
+              ...tableProps.pagination,
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Space>
+    </Protected>
   );
 }

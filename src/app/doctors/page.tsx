@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { DOCTORS_QUERY, DELETE_DOCTOR } from "@queries/doctors";
 import dayjs from "dayjs";
 import { Protected } from "@permissions/layout";
+import { useAbility } from "@hooks/useAbility";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -23,6 +24,8 @@ export default function DoctorList() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const isAdmin = ability.can("manage", "all");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -142,15 +145,17 @@ export default function DoctorList() {
                   recordItemId={record.id}
                   title="Afficher"
                 />
-                <DeleteButton
-                  hideText
-                  size="small"
-                  recordItemId={record.id}
-                  title="Supprimer"
-                  meta={{
-                    gqlMutation: DELETE_DOCTOR,
-                  }}
-                />
+                {isAdmin && (
+                  <DeleteButton
+                    hideText
+                    size="small"
+                    recordItemId={record.id}
+                    title="Supprimer"
+                    meta={{
+                      gqlMutation: DELETE_DOCTOR,
+                    }}
+                  />
+                )}
               </Space>
             )}
           />

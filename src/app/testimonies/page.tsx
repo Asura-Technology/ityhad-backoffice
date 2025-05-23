@@ -15,6 +15,7 @@ import React, { useState } from "react";
 import { TESTIMONIES_QUERY, DELETE_TESTIMONY } from "@queries/testimonies";
 import dayjs from "dayjs";
 import { Protected } from "@permissions/layout";
+import { useAbility } from "@hooks/useAbility";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -24,6 +25,8 @@ export default function TestimonyList() {
   const [dateRange, setDateRange] = React.useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
+  const ability = useAbility();
+  const isAdmin = ability.can("manage", "all");
   const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
     meta: {
@@ -158,14 +161,16 @@ export default function TestimonyList() {
       render: (_: unknown, record: BaseRecord) => (
         <Space>
           <ShowButton hideText size="small" recordItemId={record.id} />
-          <DeleteButton
-            hideText
-            size="small"
-            recordItemId={record.id}
-            meta={{
-              gqlMutation: DELETE_TESTIMONY,
-            }}
-          />
+          {isAdmin && (
+            <DeleteButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              meta={{
+                gqlMutation: DELETE_TESTIMONY,
+              }}
+            />
+          )}
         </Space>
       ),
     },

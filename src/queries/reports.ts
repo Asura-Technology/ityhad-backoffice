@@ -13,6 +13,22 @@ export const REPORTS_QUERY = gql`
       recommendation
       is_dangerous
       is_private
+      criticity {
+        code
+        name
+      }
+      age_group {
+        code
+        name
+      }
+      referral {
+        code
+        name
+      }
+      impact {
+        code
+        name
+      }
       report_statuses {
         id
         status {
@@ -21,6 +37,9 @@ export const REPORTS_QUERY = gql`
           name
         }
         date
+      }
+      student {
+        school_id
       }
     }
     report_aggregate(where: $where) {
@@ -39,6 +58,22 @@ export const REPORT_QUERY_ONE = gql`
       recommendation
       is_dangerous
       is_private
+      criticity {
+        code
+        name
+      }
+      age_group {
+        code
+        name
+      }
+      referral {
+        code
+        name
+      }
+      impact {
+        code
+        name
+      }
       report_statuses {
         id
         status {
@@ -47,6 +82,9 @@ export const REPORT_QUERY_ONE = gql`
           name
         }
         date
+      }
+      student {
+        school_id
       }
     }
   }

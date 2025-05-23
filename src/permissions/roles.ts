@@ -15,4 +15,5 @@ export type Subject =
   | "student"
   | "doctor"
   | "school"
+  | "dashboard"
   | "all";

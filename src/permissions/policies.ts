@@ -8,7 +8,7 @@ import {
 
 import { Action, Role, Subject } from "./roles";
 
-// tell TS what our Ability looks like:
+// Update AppAbility to use Subject type
 export type AppAbility = PureAbility<[Action, Subject]>;
 
 export function defineAbilitiesFor(role: Role): AppAbility {
@@ -24,14 +24,16 @@ export function defineAbilitiesFor(role: Role): AppAbility {
     case Role.DOCTOR:
       can(["read", "update"], "report");
       can("read", "testimony");
+      can("read", "dashboard");
       break;
     case Role.SCHOOL:
       can(["read", "update"], "report");
       can(["read", "update"], "testimony");
       can(["read", "create"], ["student"]);
+      can("read", "dashboard");
       break;
     default:
-      can("read", ["report", "testimony"]);
+      can("read", ["report", "testimony", "dashboard"]);
       break;
   }
 

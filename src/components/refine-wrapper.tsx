@@ -13,6 +13,7 @@ import {
   DashboardOutlined,
   SettingOutlined,
   MessageOutlined,
+  UserAddOutlined,
 } from "@ant-design/icons";
 import { dataProvider } from "@providers/data-provider";
 import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
@@ -27,6 +28,14 @@ const allResources = [
     meta: {
       label: "Tableau de bord",
       icon: <DashboardOutlined />,
+    },
+  },
+  {
+    name: "signup_request",
+    list: "/signup-requests",
+    meta: {
+      label: "Demandes d'inscription",
+      icon: <UserAddOutlined />,
     },
   },
   {

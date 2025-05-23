@@ -104,6 +104,7 @@ export default function StudentCreate() {
       }
     >
       <Create
+        title="Ajouter un élève"
         isLoading={loading}
         footerButtons={() => (
           <Button
@@ -111,7 +112,7 @@ export default function StudentCreate() {
             loading={loading}
             onClick={() => form.submit()}
           >
-            Créer l&apos;étudiant
+            Ajouter
           </Button>
         )}
       >
