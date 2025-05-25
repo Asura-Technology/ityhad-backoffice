@@ -1,7 +1,7 @@
 "use client";
 
 import { List, useTable } from "@refinedev/antd";
-import { Table, Tag } from "antd";
+import { Table, Tag, Typography } from "antd";
 import { useState } from "react";
 import { useAbility } from "@hooks/useAbility";
 import { Protected } from "@permissions/layout";
@@ -9,6 +9,8 @@ import { SIGNUP_REQUESTS_QUERY } from "@queries/signup-requests";
 import type { BaseRecord } from "@refinedev/core";
 import type { ColumnsType } from "antd/es/table";
 import type { CrudFilters } from "@refinedev/core";
+
+const { Text } = Typography;
 
 interface SignupRequest extends BaseRecord {
   role: string;
@@ -84,7 +86,9 @@ export default function SignupRequestsPage() {
       subject="all"
       fallback={
         <div style={{ padding: "20px", textAlign: "center" }}>
-          <p>You don't have permission to access this page.</p>
+          <Text type="danger">
+            Vous n&apos;avez pas la permission d&apos;accéder à cette page.
+          </Text>
         </div>
       }
     >

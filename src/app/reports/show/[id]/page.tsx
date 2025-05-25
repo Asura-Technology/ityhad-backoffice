@@ -169,7 +169,7 @@ export default function ReportShow() {
               </Col>
               <Col xs={24} md={12}>
                 <Space direction="vertical" size={4}>
-                  <Text type="secondary">Groupe d'âge</Text>
+                  <Text type="secondary">Groupe d&apos;âge</Text>
                   <Space>
                     <Text>{record?.age_group?.name || "N/A"}</Text>
                     <Text type="secondary">({record?.age_group?.code || "N/A"})</Text>
